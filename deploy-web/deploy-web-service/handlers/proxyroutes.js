@@ -3,9 +3,11 @@ import logger from "../common/logger";
 import {
     agent,
     configData,
+    getServiceConfig,
     // getNamespace,
 } from "./tools/index.js";
 import * as _ from "lodash";
+import { token2Userid } from "./oauth.js";
 
 let IsDeployed = false;
 
@@ -60,37 +62,36 @@ const thriftRecorder = (ecode, req, msg) => {
  */
 const verify = async function (req) {
     // 鉴权统一由代理层负责
-    return true;
-    // const [firstArg, methodName, ...last] = _.values(req.body);
-    // const { lang, host, port, state } = req.query;
+    const [firstArg, methodName, ...last] = _.values(req.body);
+    const { lang, host, port, state } = req.query;
 
-    // if (
-    //     !PostWhiteList.some(
-    //         (method) => method === methodName || method === req.path
-    //     )
-    // ) {
-    //     const serviceConfig = getServiceConfig(host, port);
-    //     const { deployweb } = serviceConfig;
-    //     const oauthClientID = deployweb ? deployweb.oauthClientID : "";
-    //     const tokenc = req.cookies["deploy.oauth2_token"];
-    //     if (!tokenc) {
-    //         return false;
-    //     } else if (oauthClientID) {
-    //         try {
-    //             const {
-    //                 text: { client_id: clientId, active },
-    //             } = await token2Userid(serviceConfig, tokenc);
-    //             return active && clientId === oauthClientID;
-    //         } catch (err) {
-    //             logger.error(err);
-    //             return false;
-    //         }
-    //     } else {
-    //         return false;
-    //     }
-    // } else {
-    //     return true;
-    // }
+    if (
+        !PostWhiteList.some(
+            (method) => method === methodName || method === req.path
+        )
+    ) {
+        const serviceConfig = getServiceConfig(host, port);
+        const { deployweb } = serviceConfig;
+        const oauthClientID = deployweb ? deployweb.oauthClientID : "";
+        const tokenc = req.cookies["deploy.oauth2_token"];
+        if (!tokenc) {
+            return false;
+        } else if (oauthClientID) {
+            try {
+                const {
+                    text: { client_id: clientId, active },
+                } = await token2Userid(serviceConfig, tokenc);
+                return active && clientId === oauthClientID;
+            } catch (err) {
+                logger.error(err);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 };
 
 async function interfaceProxy(req, res, next) {
