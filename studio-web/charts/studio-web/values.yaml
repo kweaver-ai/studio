@@ -59,7 +59,7 @@ image:
     tag: -mission
   studio_web_backend:
     pullPolicy: ifNotPresent
-    repository: ict/workstation-backend
+    repository: dip/studio-web-backend
     tag: latest
 imagePullSecrets: []
 ingress:
