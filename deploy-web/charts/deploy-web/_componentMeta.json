@@ -1,8 +1,8 @@
 {
     "conponentDefineType": "helm/service",
-    "name": "deploy-web-core",
+    "name": "deploy-web",
     "configSchema": {
-        "title": "deploy-web-core",
+        "title": "deploy-web",
         "description": "组件配置定义",
         "type": "object",
         "properties": {
@@ -47,12 +47,6 @@
         }
     },
     "dependence": [
-        {
-            "name": "license"
-        },
-        {
-            "name": "nodemgnt"
-        },
         {
             "name": "rds"
         }

@@ -57,7 +57,7 @@ image:
   registry: acr.aishu.cn
 imagePullSecrets: []
 maxReplicaCount: 0
-name: deploy-web-core
+name: deploy-web
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}

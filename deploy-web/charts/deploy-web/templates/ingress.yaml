@@ -18,36 +18,29 @@ spec:
           service:
             name: {{ include "template.fullname" $ }}-service
             port:
-              number: 8877
-        path: /api/workstation/v1/menu
+              number: 18080
+        path: /interface/deployweb
         pathType: Prefix
       - backend:
           service:
             name: {{ include "template.fullname" $ }}-service
             port:
               number: 18080
-        path: /interface/studioweb
+        path: /api/deploy-web-service
         pathType: Prefix
       - backend:
           service:
             name: {{ include "template.fullname" $ }}-service
             port:
               number: 18080
-        path: /api/studio-web-service
-        pathType: Prefix
-      - backend:
-          service:
-            name: {{ include "template.fullname" $ }}-service
-            port:
-              number: 18080
-        path: /api/studioweb
+        path: /api/deployweb
         pathType: Prefix
       - backend:
           service:
             name: {{ include "template.fullname" $ }}-static
             port:
               number: 18800
-        path: /studio
+        path: /deploy
         pathType: Prefix
 {{- end }}
 
@@ -70,24 +63,20 @@ spec:
       paths:
       - backend:
           serviceName: {{ include "template.fullname" $ }}-service
-          servicePort: 8877
-        path: /api/workstation/v1/menu
+          servicePort: 18080
+        path: /interface/deployweb
       - backend:
           serviceName: {{ include "template.fullname" $ }}-service
           servicePort: 18080
-        path: /interface/studioweb
+        path: /api/deployweb
       - backend:
           serviceName: {{ include "template.fullname" $ }}-service
           servicePort: 18080
-        path: /api/studioweb
-      - backend:
-          serviceName: {{ include "template.fullname" $ }}-service
-          servicePort: 18080
-        path: /api/studio-web-service
+        path: /api/deploy-web-service
       - backend:
           serviceName: {{ include "template.fullname" $ }}-static
           servicePort: 18800
-        path: /studio
+        path: /deploy
       
 {{- end }}
 

@@ -54,9 +54,6 @@
             "name": "redis"
         },
         {
-            "name": "communication-config"
-        },
-        {
             "name": "class-443"
         }
     ]
