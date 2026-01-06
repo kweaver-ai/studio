@@ -13,7 +13,7 @@ depServices:
     port: 3306
     user: root
     type: MySQL
-    database: deploy
+    database: adp
     system_id: ""
   redis:
     caName: ""
