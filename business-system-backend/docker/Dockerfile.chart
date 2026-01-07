@@ -2,7 +2,7 @@ ARG TAG="latest"
 ARG VERSION="0.1.0-alpha"
 
 # stage1: 修改版本
-FROM mikefarah/yq:latest AS stage1
+FROM acr.aishu.cn/ict/builder:tools-yq.latest AS stage1
 ARG VERSION TAG
 COPY ./helm /src
 
