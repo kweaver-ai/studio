@@ -1,4 +1,4 @@
-// 日志方法库
+// Log method library
 import { configure, getLogger } from 'log4js';
 
 class Logger {
@@ -19,4 +19,4 @@ class Logger {
     }
 }
 
-export default Logger.createLogger();
+export default Logger.createLogger();

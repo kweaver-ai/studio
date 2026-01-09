@@ -1,9 +1,9 @@
 import { Languages } from "../../core/customname";
 
 /**
- * 根据语言获取翻译
- * @param {*} lang 环境语言
- * @param {*} param1 [中文，繁体，英文]
+ * Get translation based on language
+ * @param {*} lang Environment language
+ * @param {*} param1 [Simplified Chinese, Traditional Chinese, English]
  * @returns
  */
 export const getLocale = (lang, [zhcn, zhtw, enus]) => {

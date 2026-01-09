@@ -77,13 +77,13 @@ export enum OptionMap {
 
 export const QueryList = [QueryMap.Section, QueryMap.Option];
 
-/**根据语言接口做特殊返回处理
- * "logo.png" 产品logo
- * "product" 产品名称
- * "regularBackground.png" 模板1 背景图
- * "defaultBackground.png" 板2 背景图
- * "portalBanner" 产品标语
- * "title.png" 浏览器title
+/**Special return processing based on language interface
+ * "logo.png" Product logo
+ * "product" Product name
+ * "regularBackground.png" Template 1 background image
+ * "defaultBackground.png" Template 2 background image
+ * "portalBanner" Product slogan
+ * "title.png" Browser title
  */
 export const OptionByLanguageList = [
     OptionMap.LogoPng,

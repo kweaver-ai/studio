@@ -5,9 +5,9 @@ import { configData } from "./tools/index.js";
 const serviceName = "workstation";
 
 /**
- * 代理过滤函数
+ * Proxy filter function
  * @param {*} pathname url
- * @param {*} req 请求体
+ * @param {*} req Request body
  * @returns
  */
 async function filter(pathname, req) {
@@ -19,7 +19,7 @@ async function filter(pathname, req) {
 }
 
 /**
- * 代理 options
+ * Proxy options
  */
 const options = () => {
     const config = configData.Module2Config[serviceName];
@@ -56,5 +56,5 @@ const options = () => {
     };
 };
 
-//导出对象
+// Export object
 export { filter, options };

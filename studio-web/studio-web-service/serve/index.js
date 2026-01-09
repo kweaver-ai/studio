@@ -27,7 +27,7 @@ export async function main() {
         const storeInstace = new RedisStore({
             client: redisInstance,
             prefix: "studio-web-app-sess:",
-            ttl: 60 * 60 * 24, // 会话时间-设置清除过期会话的间隔，单位：秒
+            ttl: 60 * 60 * 24, // Session time - set the interval to clear expired sessions, unit: seconds
         });
 
         redisInstance
@@ -75,19 +75,19 @@ export async function createServer(storeInstace = undefined) {
     const app = express();
 
     logger.info(
-        "本地存储session类型为：",
+        "Local session storage type:",
         storeInstace ? storeInstaceType.Redis : storeInstaceType.Default
     );
 
-    app.get("/health/ready", test) // k8s探针
-        .get("/health/alive", test) // k8s探针
+    app.get("/health/ready", test) // k8s probe
+        .get("/health/alive", test) // k8s probe
         .use(
             session({
-                secret: "eisoo", // 用来对session id相关的cookie进行签名
+                secret: "eisoo", // Used to sign cookies related to session id
                 name: "studioclustersid",
-                store: storeInstace, // 本地存储session（文本文件）
+                store: storeInstace, // Local session storage (text file)
                 // resave: false, // required: force lightweight session keep alive (touch)
-                // saveUninitialized: false, // 是否自动保存未初始化的会话
+                // saveUninitialized: false, // Whether to automatically save uninitialized sessions
                 httpOnly: true,
             })
         )
@@ -98,7 +98,7 @@ export async function createServer(storeInstace = undefined) {
         .use(bodyParser.urlencoded({ extended: false, limit: "5MB" }))
         .options("*", cors());
 
-    // 注册路由
+    // Register routes
     resgisterRouting(app);
 
     server.getServer() && server.getServer().close();

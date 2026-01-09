@@ -158,17 +158,17 @@ describe("verify", () => {
         expect(ret).toBe(true);
     });
 
-    // it("参数为 req[0]", async () => {
+    // it("The parameter is req[0]", async () => {
     //     const ret = await verify(req[0]);
     //     expect(ret).toBe(false);
     // });
 
-    // it("参数为 req[6]", async () => {
+    // it("The parameter is req[6]", async () => {
     //     const ret = await verify(req[6]);
     //     expect(ret).toBe(false);
     // });
 
-    // it("参数为 req[1]", async () => {
+    // it("The parameter is req[1]", async () => {
     //     mockToken2Userid.mockResolvedValue({
     //         text: { client_id: "c", active: true },
     //     });
@@ -176,7 +176,7 @@ describe("verify", () => {
     //     expect(ret).toBe(false);
     // });
 
-    // it("参数为 req[2]", async () => {
+    // it("The parameter is req[2]", async () => {
     //     mockToken2Userid.mockRejectedValue({});
     //     const ret = await verify(req[2]);
     //     expect(ret).toBe(false);
@@ -204,7 +204,7 @@ describe("verify", () => {
 //         expect(res.status.mock.calls[0][0]).toBe(403);
 //     });
 
-//     // it('req[3], res, fetch请求成功', async () => {
+//     // it('req[3], res, fetch request succeeds', async () => {
 //     //     const response = Promise.resolve({
 //     //         status: 200,
 //     //         text: async () => { }
@@ -214,7 +214,7 @@ describe("verify", () => {
 //     //     expect(res.status.mock.calls[0][0]).toBe(200)
 //     // });
 
-//     // it('req[3], res, fetch请求失败', async () => {
+//     // it('req[3], res, fetch request fails', async () => {
 //     //     const response = Promise.reject({
 //     //         code: 'ECONNREFUSED'
 //     //     })
@@ -225,7 +225,7 @@ describe("verify", () => {
 //     //         })
 //     // });
 
-//     // it('req[3], res, fetch请求失败, 且code 不等于ECONNREFUSED', async () => {
+//     // it('req[3], res, fetch request fails, and code is not equal to ECONNREFUSED', async () => {
 //     //     const response = Promise.reject({
 //     //         code: 'error'
 //     //     })

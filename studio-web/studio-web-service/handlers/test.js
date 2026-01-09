@@ -1,7 +1,7 @@
 /**
- * 测试用接口
- * @param {*} req 请求对象
- * @param {*} res 相应对象
+ * Test interface
+ * @param {*} req Request object
+ * @param {*} res Response object
  */
 export const test = (req, res) => {
     res.status(200);

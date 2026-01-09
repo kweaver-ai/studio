@@ -9,12 +9,12 @@ const req = {
 
 describe('meta', () => {
 
-    it('参数为 {}, res', async () => {
+    it('Parameters are {}, res', async () => {
         await meta({}, res)
         expect(res.status.mock.calls[0][0]).toBe(500)
     });
 
-    it('参数为 req, res', async () => {
+    it('Parameters are req, res', async () => {
         await meta(req, res)
         expect(res.status.mock.calls[0][0]).toBe(200)
     });

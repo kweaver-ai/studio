@@ -34,12 +34,12 @@ describe("code2Token", () => {
         jest.clearAllMocks();
     });
 
-    it('参数为 conf, "es", "a"', async () => {
+    it('Parameters are conf, "es", "a"', async () => {
         mockFetchParse.mockResolvedValueOnce({ message: "success" });
         await code2Token(conf, "es", "a");
     });
 
-    it('参数为 conf, "es", "a"', async () => {
+    it('Parameters are conf, "es", "a"', async () => {
         mockFetchParse.mockRejectedValueOnce({ message: "error" });
         code2Token(conf, "es", "a").catch((err) => {});
     });
@@ -56,12 +56,12 @@ describe("token2Userid", () => {
         jest.clearAllMocks();
     });
 
-    it('参数为 conf, "ts"', async () => {
+    it('Parameters are conf, "ts"', async () => {
         mockFetchParse.mockResolvedValueOnce({ message: "success" });
         await token2Userid(conf, "ts");
     });
 
-    it('参数为 conf, "ts"', async () => {
+    it('Parameters are conf, "ts"', async () => {
         mockFetchParse.mockRejectedValueOnce({ message: "error" });
         token2Userid(conf, "ts").catch((err) => {});
     });
@@ -78,19 +78,19 @@ describe("revokeToken", () => {
         jest.clearAllMocks();
     });
 
-    it('参数为 conf, "ws"', async () => {
+    it('Parameters are conf, "ws"', async () => {
         mockFetchParse.mockResolvedValueOnce({ message: "success" });
         await revokeToken(conf, "ts");
     });
 
-    it('参数为 conf, "ws"', async () => {
+    it('Parameters are conf, "ws"', async () => {
         mockFetchParse.mockRejectedValueOnce({ message: "error" });
         revokeToken(conf, "ts").catch((err) => {});
     });
 });
 
 describe("revokeUser", () => {
-    it('参数为 serviceConfig, "a", "a", "a", "a", "a"', async () => {
+    it('Parameters are serviceConfig, "a", "a", "a", "a", "a"', async () => {
         jest.useFakeTimers();
         const response = Promise.resolve({
             status: 200,
@@ -112,7 +112,7 @@ describe("revokeUser", () => {
 //         jest.clearAllMocks();
 //     });
 
-//     it('参数为 conf, "ms"', async () => {
+//     it('The parameters are conf, "ms"', async () => {
 //         const mockThriftConnection = {
 //             on: jest.fn(),
 //             end: jest.fn(),
@@ -136,13 +136,13 @@ describe("tokenRefresh", () => {
         jest.clearAllMocks();
     });
 
-    it("成功", async () => {
+    it("Success", async () => {
         mockFetchParse.mockResolvedValueOnce(1);
         const ret = await tokenRefresh(conf, "ts");
         expect(ret).toBe(1);
     });
 
-    it("失败", async () => {
+    it("Failure", async () => {
         mockFetchParse.mockRejectedValueOnce(0);
         await tokenRefresh(conf, "ts").catch((err) => expect(err).toBe(0));
     });

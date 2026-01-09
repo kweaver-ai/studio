@@ -1,41 +1,41 @@
 import { isArray } from "lodash";
 
 /**
- * 用户角色
+ * User Roles
  */
 export const Roles = {
     /**
-     * 超级管理员
+     * Super Admin
      */
     SuperAdmin: "super_admin",
 
     /**
-     * 系统管理员
+     * System Admin
      */
     SystemAdmin: "sys_admin",
 
     /**
-     * 安全管理员
+     * Security Admin
      */
     Security: "sec_admin",
 
     /**
-     * 审计管理员
+     * Audit Admin
      */
     Audit: "audit_admin",
 
     /**
-     * 组织管理员
+     * Organization Manager
      */
     OrgManager: "org_manager",
 
     /**
-     * 组织审计员
+     * Organization Auditor
      */
     OrgAudit: "org_audit",
 
     /**
-     * 普通用户
+     * Normal User
      */
     NormalUser: "normal_user",
 };
@@ -43,7 +43,7 @@ export const Roles = {
 export const getFirstPagePathname = (result) => {
     if (
         [Roles.SuperAdmin, Roles.SystemAdmin].some((item) => {
-            // 兼容旧API，旧api直接返回对象，新api用数组返回多个对象
+            // Compatible with old API, old API returns object directly, new API returns multiple objects in array
             return isArray(result.text)
                 ? result.text[0].roles.includes(item)
                 : result.text.roles.includes(item);
@@ -52,7 +52,7 @@ export const getFirstPagePathname = (result) => {
         return "/deploy/information-security/auth/user-org";
     } else if (
         [Roles.Security, Roles.OrgManager].some((item) => {
-            // 兼容旧API，旧api直接返回对象，新api用数组返回多个对象
+            // Compatible with old API, old API returns object directly, new API returns multiple objects in array
             return isArray(result.text)
                 ? result.text[0].roles.includes(item)
                 : result.text.roles.includes(item);

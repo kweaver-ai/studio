@@ -4,8 +4,8 @@ import { isIPV6 } from "../common/ip";
 import { UserSysRoles } from "./tools/roles.ts";
 
 /**
- * code 换 token
- * @param {*} conf 配置文件
+ * code to token
+ * @param {*} conf Configuration file
  * @param {*} code code
  */
 const code2Token = async (conf, code, prefix) => {
@@ -29,9 +29,9 @@ const code2Token = async (conf, code, prefix) => {
 };
 
 /**
- * 更新token
- * @param {*} conf 配置文件
- * @param {*} refresh_token 属性令牌
+ * refresh token
+ * @param {*} conf Configuration file
+ * @param {*} refresh_token Refresh token
  * @returns
  */
 const tokenRefresh = async (conf, refresh_token) => {
@@ -48,8 +48,8 @@ const tokenRefresh = async (conf, refresh_token) => {
 };
 
 /**
- * token 换 userid
- * @param {*} conf 配置文件
+ * token to userid
+ * @param {*} conf Configuration file
  * @param {*} token token
  */
 const token2Userid = async (conf, token) => {
@@ -69,8 +69,8 @@ const token2Userid = async (conf, token) => {
 };
 
 /**
- * userid 换 userinfo
- * @param {*} userid 用户id
+ * userid to userinfo
+ * @param {*} userid User id
  */
 const userid2Userinfo = async (userid) => {
     const { protocol, host, port } =
@@ -120,8 +120,8 @@ const userid2Userinfo = async (userid) => {
 };
 
 /**
- * 注销 token
- * @param {*} conf 配置文件
+ * revoke token
+ * @param {*} conf Configuration file
  * @param {*} token token
  */
 const revokeToken = async (conf, token) => {
@@ -141,8 +141,8 @@ const revokeToken = async (conf, token) => {
 };
 
 /**
- * 注销用户
- * @param {*} serviceConfig 服务配置
+ * revoke user
+ * @param {*} serviceConfig Service configuration
  * @param {*} id_token id—token
  * @param {*} state state
  * @param {*} studioclustersid

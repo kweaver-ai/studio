@@ -243,19 +243,19 @@ describe("logout", () => {
         jest.clearAllMocks();
     });
 
-    it("token不一致", async () => {
+    it("Token inconsistency", async () => {
         await logout(req[0], res);
         expect(res.status.mock.calls[0][0]).toBe(403);
         expect(res.json.mock.calls[0][0]).toBe(null);
     });
 
-    it("tokens不存在", async () => {
+    it("Tokens not exist", async () => {
         await logout(req[11], res);
         expect(res.status.mock.calls[0][0]).toBe(200);
         expect(res.json.mock.calls[0][0]).toBe(null);
     });
 
-    it("token一致, 且revokeUser成功", async () => {
+    it("Token consistency and revokeUser success", async () => {
         const mockRevokeUser = jest.spyOn(Oauth, "revokeUser");
         mockRevokeUser.mockResolvedValue({});
         await logout(req[1], res);
@@ -280,7 +280,7 @@ describe("login", () => {
         expect(res.status.mock.calls[0][0]).toBe(500);
     });
 
-    it("正常登录", async () => {
+    it("Normal login", async () => {
         let mockFetchParse, mockIniFileReader, mockParse;
 
         mockFetchParse = jest.spyOn(Tools, "fetchParse");
@@ -328,7 +328,7 @@ describe("oauthLoginCallback", () => {
         jest.clearAllMocks();
     });
 
-    it("state不一致", async () => {
+    it("State inconsistency", async () => {
         await oauthLoginCallback(req[3], res);
         expect(res.status.mock.calls[0][0]).toBe(200);
         // expect(res.redirect.mock.calls[0][1]).toBe(
@@ -336,7 +336,7 @@ describe("oauthLoginCallback", () => {
         // );
     });
 
-    it("存在error", async () => {
+    it("Error exists", async () => {
         await oauthLoginCallback(req[4], res);
         expect(res.status.mock.calls[0][0]).toBe(200);
         // expect(res.redirect.mock.calls[0][1]).toBe(
@@ -344,7 +344,7 @@ describe("oauthLoginCallback", () => {
         // );
     });
 
-    it("成功调用, 且用户角色为 super_admin, sys_admin", async () => {
+    it("Successful call with super_admin or sys_admin role", async () => {
         // hydra步骤保证正确
         mockCode2Token.mockResolvedValue({
             text: { access_token: "a", id_token: "b" },
@@ -367,7 +367,7 @@ describe("oauthLoginCallback", () => {
         jest.clearAllMocks();
     });
 
-    // it("成功调用, 且用户角色为普通用户", async () => {
+    //     it("Successful call with normal user role", async () => {
     //     // hydra步骤保证正确
     //     mockCode2Token.mockResolvedValue({
     //         text: { access_token: "a", id_token: "b" },
@@ -384,7 +384,7 @@ describe("oauthLoginCallback", () => {
     //     );
     // });
 
-    // it("成功调用, 且用户角色为普通用户, oauth2_authentication_session存在", async () => {
+    //     it("Successful call with normal user role and oauth2_authentication_session exists", async () => {
     //     // hydra步骤保证正确
     //     mockCode2Token.mockResolvedValue({
     //         text: { access_token: "a", id_token: "b" },
@@ -401,7 +401,7 @@ describe("oauthLoginCallback", () => {
     //     );
     // });
 
-    it("userid2Userinfo调用失败", async () => {
+    it("userid2Userinfo call failed", async () => {
         mockCode2Token.mockResolvedValue({
             text: { access_token: "a", id_token: "b" },
         });
@@ -424,7 +424,7 @@ describe("oauthLoginCallback", () => {
 //         jest.clearAllMocks();
 //     });
 
-//     it("state不一致", async () => {
+//     it("State inconsistency", async () => {
 //         await oauthLogoutCallback(req[6], res);
 //         expect(res.status.mock.calls[0][0]).toBe(403);
 //     });
@@ -436,7 +436,7 @@ describe("getUserInfoByToken", () => {
         expect(res.status.mock.calls[0][0]).toBe(403);
     });
 
-    it("token一致", async () => {
+    it("Token consistency", async () => {
         getUserInfoByToken(req[10], res);
         expect(res.status.mock.calls[0][0]).toBe(200);
     });
@@ -458,12 +458,12 @@ describe("refreshToken", () => {
         jest.clearAllMocks();
     });
 
-    it("token不存在", async () => {
+    it("Token not exist", async () => {
         await refreshToken(req[16], res);
         expect(res.status.mock.calls[0][0]).toBe(500);
     });
 
-    it("更新token成功", async () => {
+    it("Token refresh successful", async () => {
         mockTokenRefresh.mockResolvedValueOnce({
             text: { access_token: "", id_token: "", refresh_token: "" },
         });
@@ -471,7 +471,7 @@ describe("refreshToken", () => {
         expect(res.status.mock.calls[0][0]).toBe(200);
     });
 
-    it("更新token失败", async () => {
+    it("Token refresh failed", async () => {
         mockTokenRefresh.mockRejectedValueOnce({
             text: { access_token: "", id_token: "", refresh_token: "" },
         });
