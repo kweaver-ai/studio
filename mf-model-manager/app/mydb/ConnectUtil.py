@@ -59,7 +59,7 @@ class RedisClient(object):
                 redis_con = sentinel.slave_for(self.redis_master_name, username=self.redis_user,
                                                password=self.redis_passwd, db=db)
             return redis_con
-        if self.redis_cluster_mode == "master-slave":
+        elif self.redis_cluster_mode == "master-slave":
             if model == "read":
                 pool = redis.ConnectionPool(host=self.redis_read_ip, port=self.redis_read_port, db=db,
                                             password=self.redis_read_passwd)
@@ -69,6 +69,18 @@ class RedisClient(object):
                                             password=self.redis_write_passwd)
                 redis_con = redis.StrictRedis(connection_pool=pool)
             return redis_con
+        # standalone 单机模式
+        try:
+            pool = redis_async.ConnectionPool(host=self.redis_ip, port=self.redis_port, db=db,
+                                              password=self.redis_passwd,
+                                              username=self.redis_user if self.redis_user else None)
+            redis_con = redis_async.StrictRedis(connection_pool=pool)
+            # 验证连接
+            await redis_con.ping()
+            return redis_con
+        except Exception as e:
+            StandLogger.error(f"Redis连接失败 - standalone模式: host={self.redis_ip}, port={self.redis_port}, error={str(e)}")
+            raise Exception(f"connect redis error:{str(e)}")
 
     async def connect_redis_async(self, db, model):
         assert model in ["read", "write"]
