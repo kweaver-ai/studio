@@ -97,6 +97,7 @@ const userid2Userinfo = async (userid) => {
         telephone,
         third_id,
         roles,
+        auth_type,
     } = result[0];
     const userInfo = {
         id,
@@ -114,9 +115,16 @@ const userid2Userinfo = async (userid) => {
             roles: roles.map((role) => {
                 return { id: UserSysRoles[role] };
             }),
+            userType: userAuthTypeMap[auth_type],
         },
     };
     return userInfo;
+};
+
+const userAuthTypeMap = {
+    local: 1,
+    domain: 2,
+    third: 3,
 };
 
 /**
