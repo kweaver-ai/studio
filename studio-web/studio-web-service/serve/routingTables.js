@@ -41,7 +41,7 @@ export const resgisterRouting = (app) => {
     );
 
     app.get("/interface/studioweb/test", test);
-    //interfaceProxy为鉴权，在此以上写的接坣丝进行鉴权
+    // interfaceProxy is for authentication, the routes written above this line will not be authenticated
     app.all("/interface/studioweb/*", interfaceProxy);
     app.post("/interface/studioweb/logout", logout);
     app.get("/interface/studioweb/refreshtoken", refreshToken);

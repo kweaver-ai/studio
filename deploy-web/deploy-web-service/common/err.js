@@ -1,8 +1,8 @@
-// 模块id
+// Module ID
 const ModuleID = "030";
 
 /**
- * code转字符串
+ * Convert code to string
  */
 const ErrorCodeMessage = {
     ["404" + ModuleID + "001"]: "The target module of the query does not exist",
@@ -20,10 +20,10 @@ const ErrorCodeMessage = {
 };
 
 /**
- * 创建错误返回对象
- * @param {*} status 错误状态码
- * @param {*} code 错误id
- * @param {*} detail detail
+ * Create error return object
+ * @param {*} status Error status code
+ * @param {*} code Error ID
+ * @param {*} detail Detail
  * @returns
  */
 export const createError = (error, status, code, detail) => {

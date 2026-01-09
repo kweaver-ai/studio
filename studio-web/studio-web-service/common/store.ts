@@ -8,8 +8,8 @@ class Store {
     constructor() {}
 
     /**
-     * 获取数据
-     * @param dataName 数据名称
+     * Get data
+     * @param dataName Data name
      * @returns
      */
     getData(dataName: string) {
@@ -17,17 +17,17 @@ class Store {
     }
 
     /**
-     * 更新数据
-     * @param dataName 数据名称
-     * @param data 数据
+     * Update data
+     * @param dataName Data name
+     * @param data Data
      */
     updateData(dataName: string, data: any) {
         this.cache[dataName] = data;
     }
 
     /**
-     * 删除数据
-     * @param dataName 数据名称
+     * Delete data
+     * @param dataName Data name
      */
     deleteData(dataName: string) {
         this.cache[dataName] = null;

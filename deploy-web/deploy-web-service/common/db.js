@@ -3,7 +3,7 @@ import { configData } from "../handlers/tools/index";
 import * as db from "mysql2/promise";
 
 /**
- * 示例
+ * Example
  * host: rdsHost
  * password: rdsPassword
  * port: 3330
@@ -20,23 +20,23 @@ const {
     },
 } = configData.Module2Config;
 
-// 数据库配置 从cms获取
+// Database configuration obtained from cms
 const DBConfig = {
-    // 主机地址
+    // Host address
     host: RDSHOST,
-    // 主机端口
+    // Host port
     port: RDSPORT,
-    // 用户名
+    // Username
     user: RDSUSER,
-    // 密码
+    // Password
     password: RDSPWD,
-    // 最大链接数
+    // Maximum number of connections
     connectionLimit: 15,
 };
 
 /**
- * 连接池创建函数
- * @param {*} database 数据库
+ * connection pool create function
+ * @param {*} database database
  * @returns
  */
 function poolFactory(database) {
@@ -50,7 +50,7 @@ const _deploy = poolFactory("deploy");
 const _anyshare = poolFactory("anyshare");
 const _sharemgnt = poolFactory("sharemgnt_db");
 
-// 兼容 GoldenDB 和 Mysql
+// Compatible with GoldenDB and Mysql
 // _deploy.getConnection = async () => _deploy.promise()
 // _anyshare.getConnection = async () => _anyshare.promise()
 // _sharemgnt.getConnection = async () => _sharemgnt.promise()
@@ -59,11 +59,11 @@ export const deploy = _deploy;
 export const anyshare = _anyshare;
 export const sharemgnt = _sharemgnt;
 
-// 程序执行完成之后需要清空
+// Need to clean up after program execution is complete
 const pool = [deploy, anyshare, sharemgnt];
 
 /**
- * 销毁所有连接池
+ * destory Database Pool
  */
 export const destoryDatabasePool = () => {
     try {

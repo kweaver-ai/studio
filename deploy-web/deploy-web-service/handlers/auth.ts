@@ -21,7 +21,7 @@ import { Level, LoginOps, loginLog } from "./tools/log";
 import logger from "../common/logger";
 
 /**
- * 登录接口
+ * Login interface
  */
 const login = async (req: any, res: any) => {
     try {
@@ -88,7 +88,7 @@ const login = async (req: any, res: any) => {
 };
 
 /**
- * 登录成功回调
+ * Login successful callback
  */
 const oauthLoginCallback = async (req: any, res: any) => {
     const { code, state, error = "" } = req.query;
@@ -108,11 +108,11 @@ const oauthLoginCallback = async (req: any, res: any) => {
             const {
                 text: { access_token, id_token, refresh_token },
             } = await code2Token(serviceConfig, code, prefix);
-            // token 换 userid
+            // Exchange token for userid
             const {
                 text: { sub: userid },
             } = await token2Userid(serviceConfig, access_token);
-            // userid 换 userinfo
+            // Exchange userid for userinfo
             const userInfo = await userid2Userinfo(userid);
 
             req.session.user = userInfo;
@@ -140,7 +140,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
                     Roles.OrgManager,
                     Roles.OrgAudit,
                 ].some((item) => {
-                    // 兼容旧API，旧api直接返回对象，新api用数组返回多个对象
+                    // Compatible with old API, old API returns object directly, new API returns multiple objects in array
                     return isArray(result.text)
                         ? result.text[0].roles.includes(item)
                         : result.text.roles.includes(item);
@@ -149,8 +149,8 @@ const oauthLoginCallback = async (req: any, res: any) => {
                 const { "deploy-manager": deployManager, eacp } =
                     configData.Module2Config!;
                 try {
-                    // 记录登录日志
-                    logger.info("记录audit-log登录日志");
+                    // Record login log
+                    logger.info("Record audit-log login log");
                     await loginLog(req, {
                         userId: userid,
                         level: Level.INFO,
@@ -162,9 +162,9 @@ const oauthLoginCallback = async (req: any, res: any) => {
                         ]),
                         exMsg: "",
                     });
-                    logger.info("记录audit-log登录日志完成");
-                    logger.info("记录可观测性登录日志");
-                    // 记录可观测性日志
+                    logger.info("Completed recording audit-log login log");
+                    logger.info("Record observability login log");
+                    // Record observability log
                     // getRealIP
                     const payload = {
                         id: userid,
@@ -180,11 +180,11 @@ const oauthLoginCallback = async (req: any, res: any) => {
                             body: JSON.stringify(payload),
                         }
                     );
-                    logger.info("记录可观测性登录日志完成");
+                    logger.info("Completed recording observability login log");
                 } catch (err) {
                     logger.error(err);
                 }
-                logger.info("登录成功");
+                logger.info("Login successfully");
                 res.status(200).send(`
                     <html>
                         <head>
@@ -198,14 +198,14 @@ const oauthLoginCallback = async (req: any, res: any) => {
                     </html>
                 `);
             } else if (oauth2_authentication_session) {
-                logger.error("客户端勾选了记住密码");
+                logger.error("Client checked remember password");
                 res.redirect(
                     301,
                     `${prefix ? prefix : ""}/deploy/?error=keep_me_logged_in`
                 );
             } else {
-                // 记录登录失败日志
-                logger.error("没有权限登录");
+                // Record login failure log
+                logger.error("No permission to login");
                 try {
                     await loginLog(req, {
                         userId: userid,
@@ -245,7 +245,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
 };
 
 /**
- * 登出成功回调
+ * Logout Callback
  */
 const oauthLogoutCallback = async (req: any, res: any) => {
     const stateq = req.query.state;
@@ -261,7 +261,7 @@ const oauthLogoutCallback = async (req: any, res: any) => {
 };
 
 /**
- * 登出接口
+ * logout
  */
 const logout = async (req: any, res: any) => {
     const { clustertoken: tokens, serviceConfig, state, token } = req.session;
@@ -308,7 +308,7 @@ const logout = async (req: any, res: any) => {
 };
 
 /**
- * 获取用户信息
+ * get user info
  */
 const getUserInfoByToken = async (req: any, res: any) => {
     let ret;
@@ -333,7 +333,7 @@ const getUserInfoByToken = async (req: any, res: any) => {
 };
 
 /**
- * 更新token
+ * refresh token
  */
 const refreshToken = async (req: any, res: any) => {
     const { serviceConfig, token } = req.session;

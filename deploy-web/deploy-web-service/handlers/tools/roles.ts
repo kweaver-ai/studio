@@ -1,98 +1,98 @@
-// dip5.0版本仅有超级管理员、组织管理员和组织审计管理员
+// DIP 5.0 version only has Super Administrator, Organization Administrator, and Organization Auditor
 export enum SystemRoleType {
     /*
-     * 超级管理员
+     * Super Administrator
      */
     Supper = "7dcfcc9c-ad02-11e8-aa06-000c29358ad6",
 
     /**
-     * 系统管理员
+     * System Administrator
      */
     Admin = "d2bd2082-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 安全管理员
+     * Security Administrator
      */
     Securit = "d8998f72-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 审计管理员
+     * Audit Administrator
      */
     Audit = "def246f2-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 组织管理员
+     * Organization Administrator
      */
     OrgManager = "e63e1c88-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 门户管理员
+     * Portal Administrator
      */
     PortalManager = "6da85392c000-60aa-8e11-30da-88c1e36e",
 
     /**
-     * 组织审计员
+     * Organization Auditor
      */
     OrgAudit = "f06ac18e-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 共享审核员
+     * Shared Approve
      */
     SharedApprove = "f58622b2-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 文档审核员
+     * Document Approve
      */
     DocApprove = "fb648fac-ad03-11e8-aa06-000c29358ad6",
 
     /**
-     * 定密审核员
+     * Csf Approve
      */
     CsfApprove = "01a78ac2-ad04-11e8-aa06-000c29358ad6",
 }
 
 /**
- * 用户角色
+ * user role
  */
 export enum UserRole {
     /**
-     * 超级管理员
+     * supper
      */
     Super = "super_admin",
 
     /**
-     * 系统管理员
+     * sys_admin
      */
     Admin = "sys_admin",
 
     /**
-     * 安全管理员
+     * security admin
      */
     Security = "sec_admin",
 
     /**
-     * 审计管理员
+     * audit admin
      */
     Audit = "audit_admin",
 
     /**
-     * 组织管理员
+     * orgManager admin
      */
     OrgManager = "org_manager",
 
     /**
-     * 组织审计员
+     * orgAudit admin
      */
     OrgAudit = "org_audit",
 
     /**
-     * 普通用户
+     * normal user
      */
     NormalUser = "normal_user",
 }
 
 /**
- * 系统角色id与用户角色的映射
+ * system role id & user role mapping
  */
 export const SysUserRoles = {
     [SystemRoleType.Supper]: UserRole.Super,
@@ -104,7 +104,7 @@ export const SysUserRoles = {
 };
 
 /**
- * 系统角色id与用户角色的映射
+ * user role & system role id mapping
  */
 export const UserSysRoles = {
     [UserRole.Super]: SystemRoleType.Supper,

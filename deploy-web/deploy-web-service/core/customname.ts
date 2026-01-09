@@ -3,61 +3,61 @@ import { ColumnValueType } from "../common/sqltools";
 export const TableName = "custom_name";
 
 export const Keys = {
-    // 共享名称
+    // Shared name
     Name: "name",
-    // 配置json
+    // Configuration JSON
     Value: "value",
 };
 
 export const Languages = {
-    // 简体中文
+    // Simplified Chinese
     ZHCN: "zh-cn",
-    // 繁体中文
+    // Traditional Chinese
     ZHTW: "zh-tw",
-    // 美式英文
+    // American English
     ENUS: "en-us",
 };
 export const sections = {
-    //查询全部
+    // Query all
     ALL: "all",
-    //查询客户端部分名词
+    // Query client part nouns
     Anyshare: "anyshare",
-    //查询移动端部分名词
+    // Query mobile part nouns
     Mobile: "mobile",
 };
 
 export const languagesList = ["zh-cn", "zh-tw", "en-us"];
 
 export const Names = {
-    // 信息栏
+    // Information bar
     InformationBar: "informationBar",
-    // 收藏夹
+    // Favorites
     Favorite: "favorite",
-    // 收藏（动词意义,与取消收藏对应）
+    // Collect (verb meaning, corresponds to cancel collection)
     StoreUp: "storeUp",
-    // 取消收藏（动词）
+    // Cancel collection (verb)
     CancelCollection: "cancelCollection",
-    // 收藏（名词，移动端）
+    // Collection (noun, mobile)
     Collection: "collection",
-    //已收藏
+    // Already collected
     HaveCollected: "haveCollected",
-    // 取消收藏（提示语）
+    // Cancel collection (tip)
     DeleteCollectionTip: "deleteCollectionTip",
-    //取消收藏失败(提示语)
+    // Cancel collection failed (tip)
     CancelCollectionFailureTip: "cancelCollectionFailureTip",
-    // 收藏失败（提示语）
+    // Collection failed (tip)
     FailureCollectionTip: "failureCollectionTip",
-    // 收藏成功（提示语）
+    // Collection successful (tip)
     SuccessfulCollectionTip: "successfulCollectionTip",
-    // 空收藏提示（将您的常用文档添加到收藏，在此处快速访问）
+    // Empty collection tip (Add your frequently used documents to favorites for quick access here)
     EmptyCollectionTip: "emptyCollectionTip",
-    //尚未将任何文档添加到收藏夹
+    // No documents have been added to favorites yet
     EmptyCollectionTitle: "emptyCollectionTitle",
-    //您经常使用或关注的文档收藏
+    // Your frequently used or followed document collections
     EmptyCollectionSuggest: "emptyCollectionSuggest",
-    //将您经常使用或关注的文档添加到收藏夹，及时获取更新动态
+    // Add your frequently used or followed documents to favorites to get updates in time
     DocumentSuggest: "documentSuggest",
-    //展示收藏夹的文档更新动态
+    // Display document update dynamics in favorites
     DocumentDynamics: "documentDynamics",
 };
 
@@ -74,7 +74,7 @@ export const Anyshare = [
 export const Mobile = [Names.Collection, , Names.EmptyCollectionTip];
 
 /**
- * 负载
+ * Payload
  */
 export interface Payload {
     /**
@@ -82,20 +82,15 @@ export interface Payload {
      */
     name: string;
     /**
-     * 属性
+     * value
      */
     value: JSON;
     /**
-     * 其他属性
+     * other value
      */
     [index: string]: any;
 }
 
-/**
- * 格式化更新列表
- * @param {*} updateList 更新列表
- * @returns [whereConditions, updateSetConditions]
- */
 export const formatUpdatePayload = (updateList: ReadonlyArray<Payload>) => {
     return updateList.map((item: Payload) => {
         return [
@@ -119,11 +114,6 @@ export const formatUpdatePayload = (updateList: ReadonlyArray<Payload>) => {
     });
 };
 
-/**
- * 格式化 插入数据
- * @param {*} insertList 插入数据
- * @returns [fields, fieldsType, values]
- */
 export const formatInsertPayload = (insertList: ReadonlyArray<Payload>) => {
     const values = insertList.map((item: Payload) => {
         return [item[Keys.Name], item[Keys.Value]];

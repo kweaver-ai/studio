@@ -2,46 +2,46 @@ import { configData, fetchParse, getUTCTime } from "./index";
 import { v4 as uuidv4 } from "uuid";
 
 /**
- * 日志级别
+ * Log level
  */
 export const Level = {
-    ALL: 0, // 所有
-    INFO: 1, // 信息
-    WARN: 2, // 警告
+    ALL: 0, // All
+    INFO: 1, // Info
+    WARN: 2, // Warning
 };
 
-// 登录操作
+// Login operations
 export const LoginOps = {
-    ALL: 0, // 所有操作
-    LOGIN: 1, // 登录操作
-    LOGOUT: 2, // 退出操作
-    AUTHENICATION: 3, // 认证操作
-    OTHER: 127, // 其它操作
+    ALL: 0, // All operations
+    LOGIN: 1, // Login operation
+    LOGOUT: 2, // Logout operation
+    AUTHENICATION: 3, // Authentication operation
+    OTHER: 127, // Other operations
 };
 
 /**
- * 日志类型
+ * Log type
  */
 export const LogType = {
-    // 管理日志
+    // Management log
     Management: "management",
-    // 登录日志
+    // Login log
     Login: "login",
-    // 操作日志
+    // Operation log
     Operation: "operation",
 };
 
 /**
- * 用户类型
+ * User type
  */
 export const UserType = {
-    // 实名用户
+    // Authenticated user
     AuthenticatedUser: "authenticated_user",
-    // 匿名用户
+    // Anonymous user
     AnonymousUser: "anonymous_user",
-    // 应用账户
+    // App account
     App: "app",
-    // 内部服务
+    // Internal service
     InternalService: "internal_service",
 };
 
