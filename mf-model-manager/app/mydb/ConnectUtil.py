@@ -144,23 +144,40 @@ class ConnectUtil:
         try:
             redis_client = self.__class__._redis_client
             
+            StandLogger.info(f"开始初始化Redis连接池, 模式: {redis_client.redis_cluster_mode}, "
+                           f"host: {redis_client.redis_ip}, port: {redis_client.redis_port}, "
+                           f"user: {redis_client.redis_user}")
+            
             if redis_client.redis_cluster_mode == "sentinel":
                 # 哨兵模式：使用哨兵连接
+                StandLogger.info("使用哨兵模式初始化")
                 await self._init_sentinel_connection_pools(redis_client)
             elif redis_client.redis_cluster_mode == "master-slave":
                 # 主从模式：使用主从连接
+                StandLogger.info("使用主从模式初始化")
                 await self._init_master_slave_connection_pools(redis_client)
             else:
                 # 默认模式：使用单机连接
+                StandLogger.info(f"使用默认模式初始化 (实际模式: {redis_client.redis_cluster_mode})")
                 await self._init_default_connection_pools(redis_client)
+            
+            # 验证连接是否创建成功
+            if self.read_conn is None:
+                raise Exception(f"读连接创建失败: read_conn is None")
+            if self.write_conn is None:
+                raise Exception(f"写连接创建失败: write_conn is None")
+            
+            StandLogger.info(f"Redis连接池创建成功: read_conn={self.read_conn}, write_conn={self.write_conn}")
             
             # 预热连接池 - 建立初始连接
             await self._warmup_connections()
             
-            StandLogger.info("Redis高性能连接池初始化成功")
+            StandLogger.info("Redis高性能连接池初始化完成")
             
         except Exception as e:
             StandLogger.error(f"Redis连接池初始化失败: {str(e)}")
+            import traceback
+            StandLogger.error(f"详细错误: {traceback.format_exc()}")
             raise e
 
     async def _init_sentinel_connection_pools(self, redis_client):
@@ -259,7 +276,10 @@ class ConnectUtil:
     async def _init_default_connection_pools(self, redis_client):
         """初始化默认模式的连接池（单机模式）"""
         try:
-            # 创建连接池 - 高性能配置
+            StandLogger.info(f"创建默认模式连接池: host={redis_client.redis_ip}, "
+                           f"port={redis_client.redis_port}, db={self.db}")
+            
+            # 创建连接池 - 高性能配置（和mf-model-api保持完全一致）
             self.__class__._read_pool = redis_async.ConnectionPool(
                 host=redis_client.redis_ip,
                 port=redis_client.redis_port,
@@ -278,10 +298,12 @@ class ConnectUtil:
             self.read_conn = redis_async.StrictRedis(connection_pool=self.__class__._read_pool)
             self.write_conn = redis_async.StrictRedis(connection_pool=self.__class__._read_pool)
             
-            StandLogger.info("默认模式Redis连接池初始化成功")
+            StandLogger.info(f"默认模式Redis连接池初始化成功: read_conn={self.read_conn}, write_conn={self.write_conn}")
             
         except Exception as e:
             StandLogger.error(f"默认模式Redis连接池初始化失败: {str(e)}")
+            import traceback
+            StandLogger.error(f"详细错误: {traceback.format_exc()}")
             raise e
 
     async def _warmup_connections(self):
