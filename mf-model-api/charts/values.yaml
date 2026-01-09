@@ -58,11 +58,16 @@ depServices:
     caName: ca.pem
     certName: cert.pem
     keyName: key.pem
-  kafka:
-    host: "kafka-headless.resource"
-    port: "9097"
-    user: "anyrobot"
-    password: "eisoo.com123"
+  mq:
+    auth:
+      mechanism: 'PLAIN'
+      username: 'anyrobot'
+      password: 'eisoo.com123'
+    mqHost: 'kafka-headless.resource'
+    mqLookupdHost: ""
+    mqLookupdPort: 0
+    mqPort: 9097
+    mqType: kafka
   text_vector:
     mapping: "{}"
   vlm_vector:
