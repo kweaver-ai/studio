@@ -241,8 +241,10 @@ async def edit_model(model_para, userId, language):
                         redis_util = await get_redis_util()
                     quota_cache_key = f"dip:model-api:llm:{model_name}:list"
                     llm_cache_key = f"dip:model-api:llm:{model_name}:list"
+                    llm_default_key = f"dip:model-api:llm:default_model_3ed523:list"
                     await redis_util.delete_str(quota_cache_key)
                     await redis_util.delete_str(llm_cache_key)
+                    await redis_util.delete_str(llm_default_key)
                     content = {"status": "ok", "id": model_para['model_id']}
                     return JSONResponse(status_code=200, content=content)
                 else:

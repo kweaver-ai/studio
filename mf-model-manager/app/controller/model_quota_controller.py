@@ -370,7 +370,9 @@ async def add_user_model_quota_config(para: logics.AddUserModelQuotaList, user_i
         add_list = []
         edit_list = []
         only_old_user_id_list = old_user_id_list.copy()
+        user_ids = []
         for item in para.list:
+            user_ids.append(item.user_id)
             if item.user_id in user_id_list:
                 error_dict = ModelFactory_BenchmarkController_ModelConfig_UnknownError_Error.copy()
                 error_dict["detail"] = error_dict["description"] = error_dict["solution"] = "添加了重复的用户"
@@ -413,8 +415,9 @@ async def add_user_model_quota_config(para: logics.AddUserModelQuotaList, user_i
         if redis_util is None:
             redis_util = await get_redis_util()
         model_name = conf[0]["f_model_name"]
-        quota_cache_key = f"dip:model-api:llm-quota:{model_name}:list"
-        await redis_util.delete_str(quota_cache_key)
+        for user_id in user_ids:
+            quota_cache_key = f"{user_id}:dip:model-api:llm-quota:{model_name}:list"
+            await redis_util.delete_str(quota_cache_key)
         return JSONResponse(status_code=200, content={"res": "success"})
     except Exception as e:
         StandLogger.error(e.args)

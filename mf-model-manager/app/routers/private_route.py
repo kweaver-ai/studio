@@ -110,18 +110,18 @@ async def model_used(request: logics.UsedEmbedding, head_request: Request):
 
 
 # @private_route.post("/small-model/embeddings")
-async def model_used(request: logics.UsedEmbedding, head_request: Request):
-    userId, language, role = await get_user_info(head_request)
-    headers = head_request.headers
-    func_module = headers.get('x-func-module', "")
-    return await small_model_controller.embedding_model_used(request, userId, language, role, func_module)
+# async def model_used(request: logics.UsedEmbedding, head_request: Request):
+#     userId, language, role = await get_user_info(head_request)
+#     headers = head_request.headers
+#     func_module = headers.get('x-func-module', "")
+#     return await small_model_controller.embedding_model_used(request, userId, language, role, func_module)
 
 
 @private_route.get("/llm/list")
 async def source_llm(request: Request, page, size, order='desc', rule='update_time', series='all', name='',
-                     api_model='', model_type=''):
+                     api_model='', model_type='', quota: bool = Query(default=None)):
     userId, language, role = await get_user_info(request)
-    return await source_model(userId, language, page, size, name, order, series, rule, api_model, model_type)
+    return await source_model(userId, language, page, size, name, order, series, rule, api_model, model_type, quota)
 
 
 # 查看大模型接口
