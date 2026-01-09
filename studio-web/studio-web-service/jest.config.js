@@ -18,7 +18,6 @@ module.exports = {
         "!**/doc/*{.js,.ts,.tsx}",
         "!**/runtime/*{.js,.ts,.tsx}",
         "!**/serve/*{.js,.ts,.tsx}",
-        "!**/upgrade/*{.js,.ts,.tsx}",
         "!**/handlers/proxyroutes.js",
     ],
     coverageDirectory: "testResult",

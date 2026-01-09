@@ -15,18 +15,18 @@ createFolder(uploadFolder);
 
 // const storage = multer.diskStorage({
 //     destination: (req, file, cb) => {
-//         // 保存的路径
+//         // Save path
 //         const folder = path.resolve(__dirname, uploadFolder, Date.now().toString())
 //         createFolder(folder)
 //         cb(null, folder);
 //     },
 //     filename: (req, file, cb) => {
-//         // 保存的名字
+//         // Save name
 //         cb(null, file.originalname);
 //     }
 // });
 
 const storage = multer.memoryStorage();
 
-// 通过 storage 选项来对 上传行为 进行定制化
+// Customize upload behavior through storage options
 export const multerUtil = multer({ storage });

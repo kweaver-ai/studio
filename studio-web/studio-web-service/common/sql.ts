@@ -6,11 +6,11 @@ import { SQLTools, ColumnType, Condition, ColumnValueType } from "./sqltools";
  */
 class SQL extends SQLTools {
     /**
-     * 数据库连接
+     * Database connection
      */
     connection: Connection;
     /**
-     * 表名称
+     * Table name
      */
     table: string;
 
@@ -27,12 +27,12 @@ class SQL extends SQLTools {
     }
 
     /**
-     * 查询
+     * Query
      * const selectRet = o.select("key", "value");
      * => select * from table where key == 'value';
-     * @param key 键
-     * @param value 值
-     * @param expression 条件运算符
+     * @param conditions Query conditions
+     * @param fields Fields to select
+     * @param checkExist Whether to check existence only
      * @returns Promise
      */
     public async select(
@@ -70,10 +70,10 @@ class SQL extends SQLTools {
     }
 
     /**
-     * 插入语句
-     * @param fields 键 [k1,k2]
-     * @param fieldsType 键 [k1type,k2type]
-     * @param values 值 [[k1v1, k2v1], [k1v2, k2v2], ...]
+     * Insert statement
+     * @param fields Fields [k1,k2]
+     * @param fieldsType Field types [k1type,k2type]
+     * @param values Values [[k1v1, k2v1], [k1v2, k2v2], ...]
      * @returns Promise
      * const insertRet = o.insert([k1,k2],[[k1v1, k2v1], [k1v2, k2v2], ...]);
      * => insert into t_oem_config(k1,k2) values (k1v1, k2v1),(k1v2, k2v2);
@@ -109,9 +109,9 @@ class SQL extends SQLTools {
     }
 
     /**
-     * 更新语句
-     * @param whereConditions where条件
-     * @param updateSetConditions updateset条件
+     * Update statement
+     * @param whereConditions Where conditions
+     * @param updateSetConditions Update set conditions
      * @returns Promise
      */
     public async update(
@@ -136,10 +136,10 @@ class SQL extends SQLTools {
     }
 
     /**
-     * 删除语句
+     * Delete statement
      * const deleteRet = o.delete("key", "value");
-     * @param key 键
-     * @param value 值
+     * @param field Field name
+     * @param value Value
      */
     public async delete(
         field: string,

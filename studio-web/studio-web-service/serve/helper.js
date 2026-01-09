@@ -1,5 +1,10 @@
 import logger from "../common/logger";
-import { configData, fetchParse, URL_PREFIX_MODE, URLPrefixFormatter } from "../handlers/tools";
+import {
+    configData,
+    fetchParse,
+    URL_PREFIX_MODE,
+    URLPrefixFormatter,
+} from "../handlers/tools";
 
 export const registryClient = async () => {
     const { hydra } = configData.Module2Config;
@@ -29,7 +34,7 @@ export const registryClient = async () => {
         },
     };
     try {
-        logger.info("获取已注册的studio-web client");
+        logger.info("Getting registered studio-web client");
         const { text: clients } = await fetchParse(
             `${hydra.protocol}://${hydra.administrativeHost}:${hydra.administrativePort}/admin/clients?client_name=studio-web`,
             {
@@ -37,7 +42,7 @@ export const registryClient = async () => {
                 method: "GET",
             }
         );
-        logger.info("获取已注册的studio-web client成功");
+        logger.info("Successfully got registered studio-web client");
         await Promise.all(
             clients.map(async (client) => {
                 await fetchParse(
@@ -47,12 +52,12 @@ export const registryClient = async () => {
                         method: "DELETE",
                     }
                 );
-                logger.info(`删除client, client_id: ${client.client_id}`);
+                logger.info(`Deleting client, client_id: ${client.client_id}`);
                 return;
             })
         );
 
-        logger.info("开始调用注册客户端接口");
+        logger.info("Starting to call register client interface");
         const {
             text: { client_id, client_secret },
         } = await fetchParse(
@@ -65,10 +70,10 @@ export const registryClient = async () => {
         );
         configData.updateModule2Config(client_id, client_secret);
         logger.info(
-            `调用注册客户端接口成功, client_id: ${client_id}, client_secret: ${client_secret}`
+            `Successfully called register client interface, client_id: ${client_id}, client_secret: ${client_secret}`
         );
     } catch (e) {
-        logger.info("调用注册客户端接口失败");
+        logger.info("Failed to call register client interface");
         logger.info(e);
         throw e;
     }

@@ -27,7 +27,7 @@ import { loginErr } from "./assets/error.js";
 import { encodeBase64Fn } from "./tools/sso.js";
 
 /**
- * 登录接口
+ * Login interface
  */
 const login = async (req: any, res: any) => {
     try {
@@ -97,7 +97,7 @@ const login = async (req: any, res: any) => {
 };
 
 /**
- * 登录成功回调
+ * Login success callback
  */
 const oauthLoginCallback = async (req: any, res: any) => {
     const { code, state, error = "" } = req.query;
@@ -114,7 +114,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
             <html>
                 <head>
                     <script>
-                    // 仅在 iframe 内部跳转
+                    // Only redirect inside iframe
                     window.parent.location.href = '${newPathname}&redirect=true';
                     </script>
                 </head>
@@ -140,7 +140,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
             <html>
                 <head>
                     <script>
-                    // 仅在 iframe 内部跳转
+                    // Only redirect inside iframe
                     window.parent.location.href = '${newPathname}&redirect=true';
                     </script>
                 </head>
@@ -164,11 +164,11 @@ const oauthLoginCallback = async (req: any, res: any) => {
             const {
                 text: { access_token, id_token, refresh_token },
             } = await code2Token(serviceConfig, code, prefix);
-            // token 换 userid
+            // token to userid
             const {
                 text: { sub: userid },
             } = await token2Userid(serviceConfig, access_token);
-            // userid 换 userinfo
+            // userid to userinfo
             const userInfo = await userid2Userinfo(userid);
 
             req.session.user = userInfo;
@@ -199,8 +199,8 @@ const oauthLoginCallback = async (req: any, res: any) => {
                 const { "deploy-manager": deployManager, eacp } =
                     configData.Module2Config!;
                 try {
-                    // 记录登录日志
-                    logger.info("记录audit-log登录日志");
+                    // Record login log
+                    logger.info("Recording audit-log login log");
                     await loginLog(req, {
                         userId: userid,
                         level: Level.INFO,
@@ -212,9 +212,9 @@ const oauthLoginCallback = async (req: any, res: any) => {
                         ]),
                         exMsg: "",
                     });
-                    logger.info("记录audit-log登录日志完成");
-                    logger.info("记录可观测性登录日志");
-                    // 记录可观测性日志
+                    logger.info("Finished recording audit-log login log");
+                    logger.info("Recording observability login log");
+                    // Record observability log
                     // getRealIP
                     const payload = {
                         id: userid,
@@ -230,11 +230,11 @@ const oauthLoginCallback = async (req: any, res: any) => {
                             body: JSON.stringify(payload),
                         }
                     );
-                    logger.info("记录可观测性登录日志完成");
+                    logger.info("Finished recording observability login log");
                 } catch (err) {
                     logger.error(err);
                 }
-                logger.info("登录成功");
+                logger.info("Login successful");
                 const previousUrl = req.cookies["studio.previous_url"];
                 const newPathname =
                     previousUrl && req.session.integrated
@@ -245,7 +245,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
                     <html>
                         <head>
                             <script>
-                            // 仅在 iframe 内部跳转
+                            // Only redirect inside iframe
                             window.parent.location.href = '${newPathname}';
                             </script>
                         </head>
@@ -265,7 +265,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
                 `);
                 }
             } else if (oauth2_authentication_session) {
-                logger.error("客户端勾选了记住密码");
+                logger.error("Client checked remember password");
                 const newPathname = `${
                     prefix ? prefix : ""
                 }/studio/?error=keep_me_logged_in`;
@@ -274,7 +274,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
                     <html>
                         <head>
                             <script>
-                            // 仅在 iframe 内部跳转
+                            // Only redirect inside iframe
                             window.parent.location.href = '${newPathname}&redirect=true';
                             </script>
                         </head>
@@ -313,7 +313,7 @@ const oauthLoginCallback = async (req: any, res: any) => {
 };
 
 /**
- * 登出成功回调
+ * Logout success callback
  */
 const oauthLogoutCallback = async (req: any, res: any) => {
     const stateq = req.query.state;
@@ -329,7 +329,7 @@ const oauthLogoutCallback = async (req: any, res: any) => {
 };
 
 /**
- * 登出接口
+ * Logout interface
  */
 const logout = async (req: any, res: any) => {
     const {
@@ -389,7 +389,7 @@ const logout = async (req: any, res: any) => {
 };
 
 /**
- * 获取用户信息
+ * Get user information
  */
 const getUserInfoByToken = async (req: any, res: any) => {
     let ret;
@@ -440,7 +440,7 @@ const getUserInfoByQueryToken = async (req: any, res: any) => {
         const {
             text: { sub: userid },
         } = await token2Userid(req.session.serviceConfig, access_token);
-        // userid 换 userinfo
+        // userid to userinfo
         const userInfo = await userid2Userinfo(userid);
         req.session.user = userInfo;
         req.session.token = { access_token, refresh_token };
@@ -469,7 +469,7 @@ const getUserInfoByQueryToken = async (req: any, res: any) => {
 };
 
 /**
- * 更新token
+ * Update token
  */
 const refreshToken = async (req: any, res: any) => {
     const { serviceConfig, token, user: userInfo } = req.session;
@@ -516,11 +516,11 @@ const refreshToken = async (req: any, res: any) => {
 };
 
 /**
- * 单点登录接口
+ * Single sign-on interface
  */
 const loginBySSO = async (req: any, res: any) => {
     try {
-        logger.info("开始单点登录");
+        logger.info("Start single sign-on");
         const {
             credential,
             "x-forwarded-prefix": forwardedPrefix,
@@ -539,9 +539,9 @@ const loginBySSO = async (req: any, res: any) => {
             "deploy-manager": deployManager,
         } = configData.Module2Config!;
         const { oauthClientID, oauthClientSecret } = studioweb;
-        logger.info("开始获取访问地址");
+        logger.info("Start getting access address");
         const { host, port, scheme = "https" } = configData.accessAddr;
-        logger.info("获取访问地址成功");
+        logger.info("Successfully got access address");
 
         const payload = {
             client_id: oauthClientID,
@@ -552,7 +552,7 @@ const loginBySSO = async (req: any, res: any) => {
             udids: [],
         };
         logger.info("payload", payload);
-        logger.info("开始根据第三方认证获取code");
+        logger.info("Start getting code based on third-party authentication");
         const {
             text: { code },
         } = await fetchParse(
@@ -563,7 +563,10 @@ const loginBySSO = async (req: any, res: any) => {
                 body: JSON.stringify(payload),
             }
         );
-        logger.info("根据第三方认证获取code成功，code为", code);
+        logger.info(
+            "Successfully got code based on third-party authentication, code is",
+            code
+        );
         const serviceConfig = {
             hydra,
             studioweb: {
@@ -577,13 +580,13 @@ const loginBySSO = async (req: any, res: any) => {
         const {
             text: { access_token, id_token, refresh_token },
         } = await code2Token(serviceConfig, code, prefix);
-        // token 换 userid
+        // token to userid
         const {
             text: { sub: userid },
         } = await token2Userid(serviceConfig, access_token);
-        // userid 换 userinfo
+        // userid to userinfo
         const userInfo = await userid2Userinfo(userid);
-        logger.info("获取useinfo成功", userInfo);
+        logger.info("Successfully got userinfo", userInfo);
 
         req.session.serviceConfig = serviceConfig;
         req.session.integrated = "false";
@@ -614,18 +617,18 @@ const loginBySSO = async (req: any, res: any) => {
             const { "deploy-manager": deployManager, eacp } =
                 configData.Module2Config!;
             try {
-                // 记录登录日志
-                logger.info("记录audit-log登录日志");
+                // record login log
+                logger.info("record audit-log login log");
                 await loginLog(req, {
                     userId: userid,
                     level: Level.INFO,
                     opType: LoginOps.LOGIN,
-                    msg: "登录 工作站 成功",
+                    msg: "login studio successfully",
                     exMsg: "",
                 });
-                logger.info("记录audit-log登录日志完成");
-                logger.info("记录可观测性登录日志");
-                // 记录可观测性日志
+                logger.info("record audit-log login log completed");
+                logger.info("recording observability login log");
+                // recording observability login log
                 // getRealIP
                 const payload = {
                     id: userid,
@@ -641,14 +644,14 @@ const loginBySSO = async (req: any, res: any) => {
                         body: JSON.stringify(payload),
                     }
                 );
-                logger.info("记录可观测性登录日志完成");
+                logger.info("Finished recording observability login log");
             } catch (err) {
                 logger.error(err);
             }
-            logger.info("登录成功");
+            logger.info("Login successful");
             res.redirect(301, redirect_url);
         } else if (oauth2_authentication_session) {
-            logger.error("客户端勾选了记住密码");
+            logger.error("Client checked remember password");
             const newPathname = `${
                 prefix ? prefix : ""
             }/studio/?error=keep_me_logged_in`;
@@ -665,7 +668,6 @@ const loginBySSO = async (req: any, res: any) => {
                 500
         );
 
-        // 使用静态HTML而不是模板引擎
         res.set("Content-Type", "text/html; charset=utf-8");
         res.send(`
         <!DOCTYPE html>
@@ -682,8 +684,8 @@ const loginBySSO = async (req: any, res: any) => {
         <body>
             <div class="container">
                 <img width="200" src="${loginErr}"/>
-                <div class="text-tip">出错啦！</div>
-                <div class="text">内部错误。</div>
+                <div class="text-tip">Error!</div>
+                <div class="text">Internal Error.</div>
             </div>
         </body>
         </html>
@@ -694,11 +696,11 @@ const loginBySSO = async (req: any, res: any) => {
 };
 
 /**
- * 单点登录接口(公司内部凭据)
+ * Single sign-on interface (internal company credentials)
  */
 const loginByInternalSSO = async (req: any, res: any) => {
     try {
-        logger.info("开始单点登录");
+        logger.info("Start single sign-on");
         const {
             "x-forwarded-prefix": forwardedPrefix,
             redirect_url,
@@ -719,21 +721,23 @@ const loginByInternalSSO = async (req: any, res: any) => {
             "deploy-manager": deployManager,
         } = configData.Module2Config!;
         const { oauthClientID, oauthClientSecret } = studioweb;
-        logger.info("开始获取访问地址");
+        logger.info("Start getting access address");
         const { host, port, scheme = "https" } = configData.accessAddr;
-        logger.info("获取访问地址成功");
-        logger.info(`校验${product} token是否有效`);
+        logger.info("Successfully got access address");
+        logger.info(`Verify if ${product} token is valid`);
         const {
             text: { sub: productuserid },
         } = await token2Userid({ hydra, studioweb: {} }, token);
         if (!productuserid || productuserid === "undefined") {
-            throw new Error(`校验${product} token失败`);
+            throw new Error(`Failed to verify ${product} token`);
         }
         logger.info(
-            `校验${product || "dip"}token成功,用户id为${productuserid}`
+            `Successfully verified ${
+                product || "dip"
+            } token, user ID is ${productuserid}`
         );
         logger.info(
-            `开始根据refreshtoken获取登录凭据，refreshtoken为${refreshToken}`
+            `Start getting login credentials based on refresh token, refresh token is ${refreshToken}`
         );
         const {
             text: { ticket },
@@ -749,7 +753,7 @@ const loginByInternalSSO = async (req: any, res: any) => {
             }
         );
 
-        logger.info(`获取登录凭据成功`);
+        logger.info(`Successfully got login credentials`);
 
         const payload = {
             client_id: oauthClientID,
@@ -765,7 +769,7 @@ const loginByInternalSSO = async (req: any, res: any) => {
             udids: [],
         };
         logger.info("payload", payload);
-        logger.info("开始根据登录凭据获取code");
+        logger.info("Start getting code based on login credentials");
         const {
             text: { code },
         } = await fetchParse(
@@ -776,7 +780,10 @@ const loginByInternalSSO = async (req: any, res: any) => {
                 body: JSON.stringify(payload),
             }
         );
-        logger.info("根据第三方认证获取code成功，code为", code);
+        logger.info(
+            "Successfully got code based on third-party authentication, code is",
+            code
+        );
         const serviceConfig = {
             hydra,
             studioweb: {
@@ -790,13 +797,13 @@ const loginByInternalSSO = async (req: any, res: any) => {
         const {
             text: { access_token, id_token, refresh_token },
         } = await code2Token(serviceConfig, code, prefix);
-        // token 换 userid
+        // Token to user ID
         const {
             text: { sub: userid },
         } = await token2Userid(serviceConfig, access_token);
-        // userid 换 userinfo
+        // User ID to user info
         const userInfo = await userid2Userinfo(userid);
-        logger.info("获取useinfo成功", userInfo);
+        logger.info("Successfully got user info", userInfo);
 
         req.session.serviceConfig = serviceConfig;
         req.session.integrated = "false";
@@ -826,18 +833,18 @@ const loginByInternalSSO = async (req: any, res: any) => {
             const { "deploy-manager": deployManager, eacp } =
                 configData.Module2Config!;
             try {
-                // 记录登录日志
-                logger.info("记录audit-log登录日志");
+                // Record login log
+                logger.info("Record audit-log login log");
                 await loginLog(req, {
                     userId: userid,
                     level: Level.INFO,
                     opType: LoginOps.LOGIN,
-                    msg: "登录 工作站 成功",
+                    msg: "Successfully logged in to Studio",
                     exMsg: "",
                 });
-                logger.info("记录audit-log登录日志完成");
-                logger.info("记录可观测性登录日志");
-                // 记录可观测性日志
+                logger.info("Finished recording audit-log login log");
+                logger.info("Record observability login log");
+                // Record observability log
                 // getRealIP
                 const payload = {
                     id: userid,
@@ -853,16 +860,16 @@ const loginByInternalSSO = async (req: any, res: any) => {
                         body: JSON.stringify(payload),
                     }
                 );
-                logger.info("记录可观测性登录日志完成");
+                logger.info("Finished recording observability login log");
             } catch (err) {
                 logger.error(err);
             }
-            logger.info("登录成功");
+            logger.info("Login successful");
             res.redirect(301, redirect_url);
         } else {
             res.status(500);
 
-            // 使用静态HTML而不是模板引擎
+            // Use static HTML instead of template engine
             res.set("Content-Type", "text/html; charset=utf-8");
             res.send(`
             <!DOCTYPE html>
@@ -879,8 +886,8 @@ const loginByInternalSSO = async (req: any, res: any) => {
             <body>
                 <div class="container">
                     <img width="200" src="${loginErr}"/>
-                    <div class="text-tip">出错啦！</div>
-                    <div class="text">内部错误。</div>
+                    <div class="text-tip">Error!</div>
+                    <div class="text">Internal Error.</div>
                 </div>
             </body>
             </html>
@@ -896,7 +903,7 @@ const loginByInternalSSO = async (req: any, res: any) => {
                 500
         );
 
-        // 使用静态HTML而不是模板引擎
+        // Use static HTML instead of template engine
         res.set("Content-Type", "text/html; charset=utf-8");
         res.send(`
         <!DOCTYPE html>
@@ -913,8 +920,8 @@ const loginByInternalSSO = async (req: any, res: any) => {
         <body>
             <div class="container">
                 <img width="200" src="${loginErr}"/>
-                <div class="text-tip">出错啦！</div>
-                <div class="text">内部错误。</div>
+                <div class="text-tip">Error!</div>
+                <div class="text">Internal Error.</div>
             </div>
         </body>
         </html>

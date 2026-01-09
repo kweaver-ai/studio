@@ -8,6 +8,10 @@ variable "TAG" {
 
 variable "DEVOPS_PAT" {}
 
+variable "REGISTRY" {
+    default = "acr.aishu.cn"
+}
+
 
 target "mqsdk" {
     dockerfile = "docker/Dockerfile.mqsdk"
@@ -30,7 +34,7 @@ target "image" {
     dockerfile = "docker/Dockerfile.service"
     target = "result"
     tags = [
-        "acr.aishu.cn/ict/business-system-backend:${TAG}"
+        "${REGISTRY}/ict/business-system-backend:${TAG}"
     ]
     args = {
         DEVOPS_PAT = "${DEVOPS_PAT}"
@@ -55,14 +59,14 @@ target "opensource-image" {
     dockerfile = "docker/opensource.dockerfile"
     target = "image-result"
     tags = [
-        "acr.aishu.cn/ict/business-system-backend:${VERSION}"
+        "${REGISTRY}/ict/business-system-backend:${VERSION}"
     ]
 }
 target "opensource-chart" {
     dockerfile = "docker/opensource.dockerfile"
     target = "chart-result"
     tags = [
-        "acr.aishu.cn/ict/business-system-backend:${VERSION}"
+        "${REGISTRY}/ict/business-system-backend:${VERSION}"
     ]
     output = [ "result/chart" ]
 }

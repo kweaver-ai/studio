@@ -12,7 +12,7 @@ import { token2Userid } from "./oauth.js";
 let IsDeployed = false;
 
 /**
- * 以下接口不需要检查权限
+ * no need authorization api
  */
 const PostWhiteList = [
     "/interface/deployweb/login",
@@ -24,7 +24,7 @@ const PostWhiteList = [
 ];
 
 /**
- * 记录rest日志
+ * record rest log
  * @param {*} req
  * @param {*} msg
  */
@@ -42,7 +42,7 @@ const restfulRecorder = (ecode, req, msg) => {
 };
 
 /**
- * 记录thrift日志
+ * record thrift log
  * @param {*} req
  * @param {*} msg
  */
@@ -57,11 +57,11 @@ const thriftRecorder = (ecode, req, msg) => {
 };
 
 /**
- * 验证当前用户本地sid和session是否一致
+ * verify current local sid is the same as session
  * @param {*} request
  */
 const verify = async function (req) {
-    // 鉴权统一由代理层负责
+    // Authentication is handled uniformly by the proxy layer
     const [firstArg, methodName, ...last] = _.values(req.body);
     const { lang, host, port, state } = req.query;
 
@@ -154,7 +154,7 @@ async function restfulProxy(req, res) {
                           }
                 );
             } else {
-                // 只处理proton-exporter
+                // Only handle proton-exporter
                 result = await fetch(
                     `${config.protocol}://${config.host}:${
                         config.port
@@ -241,8 +241,8 @@ async function thriftProxy(req, res) {
             );
             logger.info("Forwarding requst end: " + req.originalUrl);
             res.status(result.status);
-            // 不用JSON.parse： thrift协议将 {"i64": -1} 构造成  {"i64": -00000001}， 导致浏览器client使用JSON.parse()解析时报错
-            // 不用eval：参数传入js代码会被运行
+            // Don't use JSON.parse: Thrift protocol constructs {"i64": -1} as {"i64": -00000001}, which causes JSON.parse() in browser client to throw an error
+            // Don't use eval: JS code passed as parameter will be executed
             const ret = new Function(
                 "console",
                 "Error",

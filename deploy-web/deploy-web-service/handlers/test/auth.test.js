@@ -345,22 +345,22 @@ describe("oauthLoginCallback", () => {
     });
 
     it("成功调用, 且用户角色为 super_admin, sys_admin", async () => {
-        // hydra步骤保证正确
+        // Hydra steps ensure correctness
         mockCode2Token.mockResolvedValue({
             text: { access_token: "a", id_token: "b" },
         });
         mockToken2Userid.mockResolvedValue({ text: { sub: "c" } });
         mockUserid2Userinfo.mockResolvedValue({ userInfo: {} });
 
-        // 角色验证
+        // Role verification
         mockFetchParse.mockResolvedValueOnce({
             text: [{ roles: ["super_admin"] }],
         });
         // mockFetchParse.mockResolvedValueOnce({
         //     text: [{ roles: ["super_admin"] }],
         // });
-        // 可观测性日志
-        // 登录日志
+        // Observability logs
+        // Login logs
         await oauthLoginCallback(req[5], res);
         expect(res.status.mock.calls[0][0]).toBe(200);
         // expect(res.redirect.mock.calls[0][1]).toBe("/deploy/home");
@@ -368,13 +368,13 @@ describe("oauthLoginCallback", () => {
     });
 
     it("成功调用, 且用户角色为普通用户", async () => {
-        // hydra步骤保证正确
+        // Hydra steps ensure correctness
         mockCode2Token.mockResolvedValue({
             text: { access_token: "a", id_token: "b" },
         });
         mockToken2Userid.mockResolvedValue({ text: { sub: "c" } });
         mockUserid2Userinfo.mockResolvedValue({ userInfo: {} });
-        // 角色验证
+        // Role verification
         mockFetchParse.mockResolvedValueOnce({ text: { roles: ["normal"] } });
         // mockFetchParse.mockResolvedValueOnce({ text: [{ roles: ["normal"] }] });
         await oauthLoginCallback(req[5], res);
@@ -385,13 +385,13 @@ describe("oauthLoginCallback", () => {
     });
 
     it("成功调用, 且用户角色为普通用户, oauth2_authentication_session存在", async () => {
-        // hydra步骤保证正确
+        // Hydra steps ensure correctness
         mockCode2Token.mockResolvedValue({
             text: { access_token: "a", id_token: "b" },
         });
         mockToken2Userid.mockResolvedValue({ text: { sub: "c" } });
         mockUserid2Userinfo.mockResolvedValue({ userInfo: {} });
-        // 角色验证
+        // Role verification
         mockFetchParse.mockResolvedValueOnce({ text: { roles: ["normal"] } });
         // mockFetchParse.mockResolvedValueOnce({ text: [{ roles: ["normal"] }] });
         await oauthLoginCallback(req[14], res);
@@ -424,7 +424,7 @@ describe("oauthLoginCallback", () => {
 //         jest.clearAllMocks();
 //     });
 
-//     it("state不一致", async () => {
+//     it("The states are inconsistent", async () => {
 //         await oauthLogoutCallback(req[6], res);
 //         expect(res.status.mock.calls[0][0]).toBe(403);
 //     });

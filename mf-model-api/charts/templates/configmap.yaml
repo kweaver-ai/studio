@@ -34,10 +34,10 @@ data:
   REDISWRITEUSER: {{ .Values.depServices.redis.connectInfo.username | quote}}
   REDISWRITEPASS: {{ .Values.depServices.redis.connectInfo.password | quote}}
   {{- end }}
-  KAFKAHOST: {{ .Values.depServices.kafka.host | quote }}
-  KAFKAPORT: {{ quote .Values.depServices.kafka.port }}
-  KAFKAUSER: {{ .Values.depServices.kafka.user | quote }}
-  KAFKAPASS: {{ .Values.depServices.kafka.password | quote }}
+  KAFKAHOST: {{ .Values.depServices.mq.mqHost | quote }}
+  KAFKAPORT: {{ quote .Values.depServices.mq.mqPort }}
+  KAFKAUSER: {{ .Values.depServices.mq.auth.username | quote }}
+  KAFKAPASS: {{ .Values.depServices.mq.auth.password | quote }}
   TEXTVECTORMAPPING: {{ quote .Values.depServices.text_vector.mapping | quote }}
   VLMVECTORMAPPING: {{ quote .Values.depServices.text_vector.mapping | quote }}
   TEXTRERANKERMAPPING: {{ quote .Values.depServices.text_reranker.mapping | quote }}

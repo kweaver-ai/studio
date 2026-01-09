@@ -10,30 +10,30 @@ import { isArray } from "lodash";
 import { Redis } from "ioredis";
 
 /**
- * redis 连接类型
+ * Redis connection type
  */
 const RedisConnectType = {
     /**
-     * 哨兵
+     * Sentinel
      */
     Sentinel: "sentinel",
     /**
-     * 单机模式
+     * Standalone mode
      */
     Standalone: "standalone",
     /**
-     * 主从模式（普通模式）
+     * Master-slave mode (normal mode)
      */
     MasterSlave: "master-slave",
     /**
-     * 集群模式
+     * Cluster mode
      */
     Cluster: "cluster",
 };
 
 /**
- * 读取conf文件
- * @param {*} filename 文件名
+ * read conf file
+ * @param {*} filename filename
  */
 const iniFileReader = (filename) => {
     try {
@@ -46,7 +46,7 @@ const iniFileReader = (filename) => {
 };
 
 // /**
-//  * 获取命名空间
+//  * Get namespace
 //  * @returns
 //  */
 // const getNamespace = () => {
@@ -58,8 +58,8 @@ const iniFileReader = (filename) => {
 // };
 
 /**
- * 读取 yaml 文件
- * @param {*} filename 文件名
+ * read yaml file
+ * @param {*} filename filename
  */
 const yamlFileReader = (filename) => {
     try {
@@ -72,9 +72,9 @@ const yamlFileReader = (filename) => {
 };
 
 /**
- * 格式化 header
- * @param {*} clientID 客户端id
- * @param {*} clientSecret 客户端不公开口令
+ * format header
+ * @param {*} clientID client id
+ * @param {*} clientSecret client secret
  */
 const formatHeaders = (clientID, clientSecret) => {
     return clientID && clientSecret
@@ -93,10 +93,6 @@ const formatHeaders = (clientID, clientSecret) => {
           };
 };
 
-/**
- * 防止代码注入
- * @param {*} callback
- */
 const fetchParse = async (url, args, code = 0) => {
     return await new Promise(async (resolve, reject) => {
         try {
@@ -149,7 +145,7 @@ const fetchParse = async (url, args, code = 0) => {
 };
 
 /**
- * 跳过https证书验证
+ * skip https verfiy
  */
 const agent = new https.Agent({
     rejectUnauthorized: false,
@@ -172,7 +168,7 @@ class Config {
     }
 
     updateModule2Config(client_id = "", client_secret = "") {
-        // 仅读取rds和redis配置
+        // Only read rds and redis configurations
         this.globalConfig = yamlFileReader(
             "/etc/globalConfig/depservice/depServices.yaml"
         );
@@ -196,7 +192,7 @@ class Config {
                 publicHost: "ossgatewaymanager-public",
                 publicPort: "9000",
             },
-            // 兼容ossgateway(目前接口名称)
+            // Compatible with ossgateway (current interface name)
             ossgateway: {
                 protocol: "http",
                 host: "ossgatewaymanager-private",
@@ -378,7 +374,7 @@ class Config {
     }
 
     /**
-     * 模块 端口协议映射
+     * module port protocol map
      */
     get Module2Config() {
         return this.module2Config;
@@ -387,11 +383,6 @@ class Config {
 
 const configData = new Config();
 
-/**
- * 发送https请求
- * @param option 配置项
- * @param data 数据
- */
 const httpsRequest = async (option, data) => {
     return new Promise((resolve, reject) => {
         const requests = https.request(option, (res) => {
@@ -415,11 +406,6 @@ const httpsRequest = async (option, data) => {
     });
 };
 
-/**
- * 发送https请求
- * @param option 配置项
- * @param data 数据
- */
 const httpRequest = async (option, data) => {
     return new Promise((resolve, reject) => {
         const requests = http.request(option, (res) => {
@@ -443,33 +429,24 @@ const httpRequest = async (option, data) => {
     });
 };
 
-/**
- * 递归删除文件夹
- * @param path 路径
- */
 const delDir = (path = "") => {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach((file) => {
             const currentPath = path + "/" + file;
             if (fs.statSync(currentPath).isDirectory()) {
-                delDir(currentPath); //递归删除文件夹
+                delDir(currentPath); // Recursively delete folder
             } else {
-                fs.unlinkSync(currentPath); //删除文件
+                fs.unlinkSync(currentPath); // Delete file
             }
         });
         fs.rmdirSync(path);
     }
 };
 
-/**
- * 获取UTC格式时间
- * @param {*} dateString 日期时间字符串
- * @returns UTC格式时间
- */
 function getUTCTime(dateString) {
     let y, M, d, h, m, s;
 
-    // (ISO 8601标准) 例：2017-12-14 , 2017-12-11T14:50:55+08:00
+    // (ISO 8601 standard) Example: 2017-12-14 , 2017-12-11T14:50:55+08:00
     if (
         dateString.match(
             /^\d{4}(-?\d{2}){2}([\sT]\d{2}:\d{2}:\d{2}([\+\-\s]\d{2}:\d{2})?)?/
@@ -497,7 +474,7 @@ function getUTCTime(dateString) {
                         : prev["zone"],
                 };
             }, {});
-        // zone指定时区，可以是：Z (UTC)、+hh:mm、-hh:mm
+        // zone specifies time zone, which can be: Z (UTC), +hh:mm, -hh:mm
         const [hh, mm] = zone.split(":");
         const [, t = "00:00:00"] = time.split(/[\sT]/);
 
@@ -522,7 +499,7 @@ function getUTCTime(dateString) {
 }
 
 /**
- * 获取clentID
+ * get clentID
  */
 const getServiceConfigBase = () => {
     return (host, port) => {
@@ -545,12 +522,6 @@ try {
     getServiceConfig = getServiceConfigBase();
 } catch (err) {}
 
-/**
- * 创建哨兵连接信息
- * @param {*} sentinelHost 哨兵连接主机
- * @param {*} sentinelPort 哨兵连接端口
- * @returns
- */
 function createSentinels(sentinelHost, sentinelPort) {
     return isArray(sentinelHost)
         ? sentinelHost.map((host, index) => {
@@ -569,11 +540,6 @@ function createSentinels(sentinelHost, sentinelPort) {
           ];
 }
 
-/**
- * 根据域名或者ip获取协议版本
- * @param {*} hostname 主机名称或者ip
- * @returns number
- */
 async function getIPFamily(hostname) {
     const { family } = await lookup(hostname);
     const familyLowerCase = String(family).toLowerCase();
@@ -594,11 +560,6 @@ async function getIPFamily(hostname) {
     }
 }
 
-/**
- * 创建一个redis存储器
- * 注： 账号与认证服务剥离暂不涉及redis数据库部分
- * @returns
- */
 async function createRedisStore() {
     const { connectType, connectInfo } = configData.Module2Config.redis;
     let redisConnectInfo = null;
@@ -631,7 +592,7 @@ async function createRedisStore() {
             slavePort,
             username,
         } = connectInfo;
-        // session涉及写操作，master挂之后系统不再可用
+        // Session involves write operations, system unavailable after master goes down
         redisConnectInfo = {
             host: masterHost,
             port: masterPort,
@@ -660,8 +621,8 @@ async function createRedisStore() {
 
         return new Redis.Cluster(redisConnectHosts, {
             redisOptions: {
-                username, // 集群账号
-                password, // 集群密码
+                username, // Cluster account
+                password, // Cluster password
             },
         });
     } else {
@@ -672,8 +633,8 @@ async function createRedisStore() {
 }
 
 /**
- * 获取客户端ip
- * @param {*} headers 请求头
+ * get client ip
+ * @param {*} headers headers
  * @returns ip
  */
 const getRealIP = (headers) => {
@@ -685,20 +646,20 @@ const getRealIP = (headers) => {
 };
 
 /**
- * 模式
+ * URL prefix mode
  */
 const URL_PREFIX_MODE = {
-    // 去除头部的分隔符
+    // Remove header separator
     head: "head",
-    // 去除尾部的分隔符
+    // Remove tail separator
     tail: "tail",
-    // 去除两端的分隔符
+    // Remove separators at both ends
     edge: "edge",
 };
 
 /**
- * 对url前缀进行格式化
- * @param prefix url前缀
+ * Format URL prefix
+ * @param prefix URL prefix
  * @returns /a/b => /a/b/
  */
 const URLPrefixFormatter = (prefix, mode = "") => {
@@ -747,7 +708,9 @@ const storeInstaceType = {
     Default: "default",
 };
 
-// 获取实例模式
+/**
+ * Get instance mode
+ */
 const tenantMode = (() => {
     const globalConfig = yamlFileReader(
         "/etc/globalConfig/depservice/depServices.yaml"

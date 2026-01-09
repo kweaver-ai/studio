@@ -1,6 +1,6 @@
 export const Roles = {
-    // 超级管理员：三权不分立
+    // Super Administrator: Three powers not separated
     SuperAdmin: "super_admin",
-    // 系统管理员：三权分立
+    // System Administrator: Three powers separated
     SystemAdmin: "sys_admin",
 };

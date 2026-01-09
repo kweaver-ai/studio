@@ -20,7 +20,6 @@ module.exports = {
         "!**/doc/*{.js,.ts,.tsx}",
         "!**/runtime/*{.js,.ts,.tsx}",
         "!**/serve/*{.js,.ts,.tsx}",
-        "!**/upgrade/*{.js,.ts,.tsx}",
         "!**/handlers/updateThirdpartyPackage.js",
         "!**/handlers/batchimport.js",
         "!**/handlers/proxyroutes.js",

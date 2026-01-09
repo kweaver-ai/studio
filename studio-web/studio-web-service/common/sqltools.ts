@@ -1,7 +1,7 @@
 import { isArray } from "lodash";
 
 /**
- * 类型
+ * Types
  */
 export const ColumnValueType = {
     /**
@@ -9,105 +9,105 @@ export const ColumnValueType = {
      */
     JSON: "json",
     /**
-     * 字符串
+     * String
      */
     String: "string",
     /**
-     * 其他
+     * Other
      */
     Other: "other",
 };
 
 /**
- * 列项 类型
+ * Column item types
  */
 export const ColumnType = {
     /**
-     * select 列项
+     * select column item
      */
     SelectFeilds: "selectFeilds",
     /**
-     * insert 列项
+     * insert column item
      */
     InsertFeilds: "insertFeilds",
     /**
-     * insert 值项
+     * insert value item
      */
     InsertValues: "InsertValues",
 };
 
 /**
- * 算数运算符
+ * Arithmetic operators
  */
 type ArithmeticOperators =
-    | "+" // 加
-    | "-" // 减
-    | "*" // 乘
+    | "+" // Add
+    | "-" // Subtract
+    | "*" // Multiply
     | "/"
     | "DIV"
-    | "div" // 除
+    | "div" // Divide
     | "%"
     | "MOD"
-    | "mod"; // 求余
+    | "mod"; // Modulo
 
 /**
- * 比较运算符
+ * Comparison operators
  */
 type ComparisonOperators =
-    | "=" // 等于
+    | "=" // Equal
     | "!="
-    | "<>" // 不等于
-    | ">" // 大于
-    | "<" // 小于
-    | ">=" // 大于等于
-    | "<=" // 小于等于
-    | "<=>" // 严格比较两个null值是否相等，两个操作码均为NULL时，其所得值为1；而当一个操作码为NULL时，其所得值为0
+    | "<>" // Not equal
+    | ">" // Greater than
+    | "<" // Less than
+    | ">=" // Greater than or equal
+    | "<=" // Less than or equal
+    | "<=>" // Strictly compare whether two null values are equal, return 1 when both are NULL; return 0 when one is NULL
     | "IN"
-    | "in" // 在集合中
+    | "in" // In collection
     | "LIKE"
-    | "like" // 模糊匹配
+    | "like" // Fuzzy match
     | "REGEXP"
     | "regexp"
     | "RLIKE"
-    | "rlike" // 正则式匹配
+    | "rlike" // Regular expression match
     | "BETWEEN"
-    | "between" //在两个值之间
+    | "between" // Between two values
     | "NOT IN"
-    | "not in" // 不在集合中
+    | "not in" // Not in collection
     | "IS NULL"
-    | "is null" //是否是null
+    | "is null" // Is null
     | "IS NOT NULL"
-    | "is not null" // 是否不是null
+    | "is not null" // Is not null
     | "NOT BETWEEN"
-    | "not between"; // 不在两个值之间
+    | "not between"; // Not between two values
 
 /**
- * 逻辑运算符
+ * Logical operators
  */
 type LogicalOperators =
     | "NOT"
     | "not"
-    | "!" // 逻辑非
+    | "!" // Logical NOT
     | "AND"
-    | "and" // 逻辑与
+    | "and" // Logical AND
     | "OR"
-    | "or" // 逻辑或
+    | "or" // Logical OR
     | "XOR"
-    | "xor"; // 逻辑异或
+    | "xor"; // Logical XOR
 
 /**
- * 位运算符
+ * Bitwise operators
  */
 type BitwiseOperators =
-    | "&" // 按位与
-    | "|" // 按位或
-    | "^" // 按位异或
-    | "!" // 取反
-    | "<<" // 左移
-    | ">>"; // 右移
+    | "&" // Bitwise AND
+    | "|" // Bitwise OR
+    | "^" // Bitwise XOR
+    | "!" // Bitwise NOT
+    | "<<" // Left shift
+    | ">>"; // Right shift
 
 /**
- * 条件对象
+ * Condition object
  */
 export interface Condition {
     field: string;
@@ -125,8 +125,8 @@ export class SQLTools {
     constructor() {}
 
     /**
-     * 是否是真值
-     * @param o 检查对象
+     * Check if it is a truthy value
+     * @param o Object to check
      * @returns true|false
      */
     isTruly(o: any) {
@@ -134,9 +134,9 @@ export class SQLTools {
     }
 
     /**
-     * 析构数据
-     * @param value 数据
-     * @param columnValueType 插入数据类型
+     * Escape data
+     * @param value Data value
+     * @param columnValueType Insert data type
      * @returns
      */
     escapeData(value: any, columnValueType: string) {
@@ -150,9 +150,9 @@ export class SQLTools {
     }
 
     /**
-     * 检查条件参数
-     * @param field 字段
-     * @param value 值
+     * Check condition attributes
+     * @param field Field name
+     * @param value Value
      */
     checkConditionAttr(field: string, value: any) {
         if (!this.isTruly(value)) {
@@ -163,8 +163,8 @@ export class SQLTools {
     }
 
     /**
-     * where 或者 update set等 子句 工厂函数
-     * @param conditions 子句对象数组
+     * Where or update set clause factory function
+     * @param conditions Clause object array
      * @returns a = 1
      * @returns a = 1 AND b = 2
      */
@@ -189,10 +189,10 @@ export class SQLTools {
     }
 
     /**
-     * 列项 工厂
-     * @param columns 列
-     * @param type 参数类型
-     * @param columnsType 列项类型
+     * Column item factory
+     * @param columns Columns
+     * @param type Parameter type
+     * @param columnsType Column item types
      * @returns SelectFeilds => a,b,c
      * @returns InsertFeilds => (a,b,c)
      * @returns InsertValues => (a,b,c),(d,e,f)
