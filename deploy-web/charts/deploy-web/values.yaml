@@ -42,6 +42,8 @@ depServices:
   deploy-service:
     HttpHost: deploy-service
     HttpPort: 9703
+  class-443:
+    ingressClass: "class-443"
 env:
   timezone: Asia/Shanghai
 image:
@@ -56,6 +58,8 @@ image:
   pullPolicy: IfNotPresent
   registry: acr.aishu.cn
 imagePullSecrets: []
+ingress:
+  annotations: {}
 maxReplicaCount: 0
 name: deploy-web
 nameOverride: ""
