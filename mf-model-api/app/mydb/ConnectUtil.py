@@ -47,31 +47,43 @@ class RedisClient(object):
             self.redis_sentinel_password = base_config.SENTINELPASS
             self._initialized = True
 
-    def connect_redis(self, db, model):
+    async def connect_redis(self, db, model):
         assert model in ["read", "write"]
         if self.redis_cluster_mode == "sentinel":
-            sentinel = Sentinel([(self.redis_ip, self.redis_port)], password=self.redis_sentinel_password,
-                                sentinel_kwargs={
-                                    "password": self.redis_sentinel_password,
-                                    "username": self.redis_sentinel_user
-                                })
-            if model == "write":
-                redis_con = sentinel.master_for(self.redis_master_name, username=self.redis_user,
-                                                password=self.redis_passwd, db=db)
-            if model == "read":
-                redis_con = sentinel.slave_for(self.redis_master_name, username=self.redis_user,
-                                               password=self.redis_passwd, db=db)
-            return redis_con
+            try:
+                sentinel = Sentinel_async([(self.redis_ip, self.redis_port)], password=self.redis_sentinel_password,
+                                          sentinel_kwargs={
+                                              "password": self.redis_sentinel_password,
+                                              "username": self.redis_sentinel_user
+                                          })
+                if model == "write":
+                    redis_con = await sentinel.master_for(self.redis_master_name, username=self.redis_user,
+                                                          password=self.redis_passwd, db=db)
+                if model == "read":
+                    redis_con = await sentinel.slave_for(self.redis_master_name, username=self.redis_user,
+                                                         password=self.redis_passwd, db=db)
+                # 验证连接
+                await redis_con.ping()
+                return redis_con
+            except Exception as e:
+                StandLogger.error(f"Redis连接失败 - sentinel模式: host={self.redis_ip}, port={self.redis_port}, error={str(e)}")
+                raise Exception(f"connect redis error:{str(e)}")
         elif self.redis_cluster_mode == "master-slave":
-            if model == "read":
-                pool = redis.ConnectionPool(host=self.redis_read_ip, port=self.redis_read_port, db=db,
-                                            password=self.redis_read_passwd)
-                redis_con = redis.StrictRedis(connection_pool=pool)
-            if model == "write":
-                pool = redis.ConnectionPool(host=self.redis_write_ip, port=self.redis_write_port, db=db,
-                                            password=self.redis_write_passwd)
-                redis_con = redis.StrictRedis(connection_pool=pool)
-            return redis_con
+            try:
+                if model == "read":
+                    pool = redis_async.ConnectionPool(host=self.redis_read_ip, port=self.redis_read_port, db=db,
+                                                      password=self.redis_read_passwd)
+                    redis_con = redis_async.StrictRedis(connection_pool=pool)
+                if model == "write":
+                    pool = redis_async.ConnectionPool(host=self.redis_write_ip, port=self.redis_write_port, db=db,
+                                                      password=self.redis_write_passwd)
+                    redis_con = redis_async.StrictRedis(connection_pool=pool)
+                # 验证连接
+                await redis_con.ping()
+                return redis_con
+            except Exception as e:
+                StandLogger.error(f"Redis连接失败 - master-slave模式: host={self.redis_ip}, port={self.redis_port}, error={str(e)}")
+                raise Exception(f"connect redis error:{str(e)}")
         else:
             # standalone 单机模式
             try:

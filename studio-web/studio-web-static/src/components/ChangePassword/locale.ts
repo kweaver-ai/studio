@@ -79,4 +79,14 @@ export default i18n([
         "Cannot connect to Document Domain.",
     ],
     ["提示", "提示", "Tips"],
+    [
+        "密码为 6~100 位，可包含 英文 、 数字 、空格或半角特殊字符。",
+        "密碼長度需為 6 至 100 個字元，可包含英文、數字、空格或半形特殊字元。",
+        "The password must be 6 to 100 characters in length and can include English letters, digits, spaces, or half-width special characters.",
+    ],
+    [
+        "密码为 ${length}~100 位，必须同时包含 大小写英文字母、数字与半角特殊字符。",
+        "密碼長度需為 ${length} 至 100 個字元，且必須同時包含大寫英文字母、小寫英文字母、數字以及半形特殊字元。",
+        "The password must be ${length} to 100 characters in length and must include uppercase & lowercase letters, digits, and half-width special characters.",
+    ],
 ]);

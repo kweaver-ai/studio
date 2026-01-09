@@ -117,14 +117,14 @@ export default class ChangePassword extends ChangePasswordBase {
                         <div className={styles["message"]}>
                             {this.state.strongPasswordStatus
                                 ? __(
-                                      "密码为 ${length}~100 位，必须同时包含 大小写英文字母、数字与特殊字符，特殊字符可为 ~!%#$@-_.",
+                                      "密码为 ${length}~100 位，必须同时包含 大小写英文字母、数字与半角特殊字符。",
                                       {
                                           length: this.state
                                               .strongPasswordLength,
                                       }
                                   )
                                 : __(
-                                      "密码为 6~100 位，只能包含 英文 或 数字 或 ~!%#$@-_. 字符。"
+                                      "密码为 6~100 位，可包含 英文 、 数字 、空格或半角特殊字符。"
                                   )}
                         </div>
                         <Form layout="horizontal" labelAlign="left">

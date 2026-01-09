@@ -97,12 +97,18 @@ export async function getModuleConfig(): Promise<ModuleConfigs> {
  * @param moduleConfigs 模块化配置
  * @returns
  */
-export function getNavItem(moduleConfigs: any, lang: Locale) {
+export function getNavItem(
+    moduleConfigs: any,
+    lang: Locale,
+    userInfo: UserInfo
+) {
     const navItem = [
-        {
-            label: __("修改密码"),
-            key: "change-pwd",
-        },
+        userInfo?.user?.userType === 1
+            ? {
+                  label: __("修改密码"),
+                  key: "change-pwd",
+              }
+            : null,
         moduleConfigs &&
         moduleConfigs.languages.status &&
         !(moduleConfigs.languages.config.length === 1)
@@ -188,10 +194,12 @@ export const unlogin = async (
                 !window.location.search.includes("fullscreen=true")
             ) {
                 window.top.location.href = url;
-                session.set("studio.loginerror", loginerror);
+                loginerror !== "request_unauthorized" &&
+                    session.set("studio.loginerror", loginerror);
             } else {
                 window.location.href = url;
-                session.set("studio.loginerror", loginerror);
+                loginerror !== "request_unauthorized" &&
+                    session.set("studio.loginerror", loginerror);
             }
         } else {
             clearUserInfo();
@@ -265,7 +273,7 @@ export const getDefaultAppConfig = async (
         domainInfo,
         userInfo!,
         oemConfig,
-        getNavItem(moduleConfigs, lang),
+        getNavItem(moduleConfigs, lang, userInfo),
         onChangePwd
     );
     const urlPrefix = URLPrefixFormatter(prefix, URL_PREFIX_MODE.tail);
