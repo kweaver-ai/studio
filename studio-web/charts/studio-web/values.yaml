@@ -8,8 +8,8 @@ depServices:
   deploy-installer:
     mode: ""
   rds:
-    host: 10.2.179.253
-    password: 123qweASD
+    host: host
+    password: password
     port: 3306
     user: root
     type: MySQL
