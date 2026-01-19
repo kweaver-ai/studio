@@ -2,7 +2,7 @@ import { useMemo, useEffect, useReducer } from 'react';
 import _ from 'lodash';
 import intl from 'react-intl-universal';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { apis } from '@aishu-tech/components/dist/dip-components.min.js';
+import { apis } from '@kweaver-ai/components/dist/dip-components.min.js';
 import { message, ConfigProvider, type ThemeConfig } from 'antd';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
@@ -14,7 +14,7 @@ import { Modal } from '@/common';
 
 import THEME from '@/theme.ts';
 import { prefixCls } from '@/variable';
-import '@aishu-tech/components/dist/dip-components.min.css';
+import '@kweaver-ai/components/dist/dip-components.min.css';
 
 import Prompt from '@/pages/Prompt'; // 提示词
 import ModelManagement from '@/pages/ModelManagement'; // 模型管理

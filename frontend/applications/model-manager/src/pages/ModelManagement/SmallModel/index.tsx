@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import intl from 'react-intl-universal';
-import { apis, components } from '@aishu-tech/components/dist/dip-components.min.js';
+import { apis, components } from '@kweaver-ai/components/dist/dip-components.min.js';
 import { Dropdown } from 'antd';
 import { EllipsisOutlined, ExportOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 

@@ -124,9 +124,7 @@ const DatasetNodeForm = forwardRef<DatasetNodeFormRefType, any>(({ node, editDat
     const newDatasetObj = { ...datasetData, datasetList: newNodeDatasetList, error: errorData };
 
     // 非编辑模式的时候，将选中的数据集/版本作为节点的名字
-    if (!editData) {
-      newDatasetObj.name = getDatasetName(formData.datasetVersionId);
-    }
+    newDatasetObj.name = getDatasetName(formData.datasetVersionId);
     node.updateData({ dataset: newDatasetObj });
 
     lastDatasetVersionId.current = formData.datasetVersionId;
@@ -227,7 +225,7 @@ const DatasetNodeForm = forwardRef<DatasetNodeFormRefType, any>(({ node, editDat
         >
           <AdTreeSelect
             style={{ minWidth: 232, width: 'unset' }}
-            disabled={readOnly || !!editData}
+            disabled={readOnly || editData?.fileInputOutput?.length >= 2 || (editData?.fileInputOutput?.length >= 1 && !editData?.doc_id)}
             treeLoadedKeys={treeProps.loadedKeys}
             loadData={onLoadData}
             treeData={treeProps.data}

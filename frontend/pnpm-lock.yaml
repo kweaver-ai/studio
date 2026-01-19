@@ -243,12 +243,12 @@ importers:
 
   applications/business-system:
     dependencies:
-      '@aishu-tech/components':
-        specifier: 1.0.2
-        version: 1.0.2
       '@ant-design/icons':
         specifier: 5.6.1
         version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@kweaver-ai/components':
+        specifier: 1.0.0
+        version: 1.0.0
       ahooks:
         specifier: 3.9.0
         version: 3.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -337,12 +337,12 @@ importers:
 
   applications/model-manager:
     dependencies:
-      '@aishu-tech/components':
-        specifier: 1.0.2
-        version: 1.0.2
       '@ant-design/icons':
         specifier: 5.6.1
         version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@kweaver-ai/components':
+        specifier: 1.0.0
+        version: 1.0.0
       '@microsoft/fetch-event-source':
         specifier: 2.0.1
         version: 2.0.1
@@ -509,9 +509,6 @@ importers:
         version: 5.8.2
 
 packages:
-
-  '@aishu-tech/components@1.0.2':
-    resolution: {integrity: sha512-EixDAwuDuCk7UzLBNGn9tLdYZk8YnvWLjxNnL6zlxj5fCajimdI/WD8iOtHGRrAUfcvKHz5IMJ6HoihL5tDDkg==}
 
   '@ant-design/colors@3.2.2':
     resolution: {integrity: sha512-YKgNbG2dlzqMhA9NtI3/pbY16m3Yl/EeWBRa+lB1X1YaYxHrxNexiQYCLTWO/uDvAjLFMEDU+zR901waBtMtjQ==}
@@ -946,6 +943,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@kweaver-ai/components@1.0.0':
+    resolution: {integrity: sha512-znWDoMN3ek6a2z1TwhN5ci3CXApIZecPKEI77RrVH7lxfrN0EkMERN3Y8rH8GGflZ8rbDRb/dBmNeChahRGWBQ==}
 
   '@lezer/common@1.5.0':
     resolution: {integrity: sha512-PNGcolp9hr4PJdXR4ix7XtixDrClScvtSCYW3rQG106oVMOOI+jFb+0+J3mbeL/53g1Zd6s0kJzaw6Ri68GmAA==}
@@ -4523,8 +4523,6 @@ packages:
 
 snapshots:
 
-  '@aishu-tech/components@1.0.2': {}
-
   '@ant-design/colors@3.2.2':
     dependencies:
       tinycolor2: 1.6.0
@@ -5096,6 +5094,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@kweaver-ai/components@1.0.0': {}
 
   '@lezer/common@1.5.0': {}
 

@@ -2,7 +2,7 @@ import { useMemo, useEffect, useReducer } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import intl from 'react-intl-universal';
-import { apis } from '@aishu-tech/components/dist/dip-components.min.js';
+import { apis } from '@kweaver-ai/components/dist/dip-components.min.js';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { message, ConfigProvider, type ThemeConfig } from 'antd';
 
@@ -15,7 +15,7 @@ import { Modal } from '@/common';
 
 import THEME from '@/theme.ts';
 import { prefixCls } from '@/variable';
-import '@aishu-tech/components/dist/dip-components.min.css';
+import '@kweaver-ai/components/dist/dip-components.min.css';
 
 import BusinessDomainManagement from './BusinessDomainManagement';
 

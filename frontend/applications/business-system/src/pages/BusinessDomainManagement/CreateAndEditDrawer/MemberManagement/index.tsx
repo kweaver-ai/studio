@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import _ from 'lodash';
 // import classNames from 'classnames';
 import intl from 'react-intl-universal';
-import { apis, components } from '@aishu-tech/components/dist/dip-components.min.js';
+import { apis, components } from '@kweaver-ai/components/dist/dip-components.min.js';
 // import { Dropdown } from 'antd';
 import {
   MinusCircleOutlined,
