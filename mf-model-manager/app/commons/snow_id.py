@@ -93,8 +93,8 @@ class IdWorker(object):
 
 
 def snow_id():
-    workers = IdWorker(1, 1, 0)
-    idx = workers.get_id()
+    """使用全局worker实例生成ID"""
+    idx = worker.get_id()
     return idx
 
 
