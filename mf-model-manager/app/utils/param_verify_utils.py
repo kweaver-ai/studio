@@ -147,7 +147,7 @@ def llm_test_verify(model_param):
             return LLMTestError
         if model_param["model_type"] not in ('llm', 'rlm','vu'):
             LLMTestError['description'] = "model_type 参数不符合规范"
-            LLMTestError['detail'] = "当前参数仅支持 llm|rlm"
+            LLMTestError['detail'] = "当前参数仅支持 llm|rlm|vu"
             return LLMTestError
     except Exception as e:
         print(e)
@@ -178,7 +178,7 @@ def llm_edit_verify(model_para):
             return LLMEditError
     if model_para["model_type"] not in ('llm', 'rlm', 'vu'):
         LLMEditError['description'] = "model_type 参数不符合规范"
-        LLMEditError['detail'] = "当前参数仅支持 llm|rlm"
+        LLMEditError['detail'] = "当前参数仅支持 llm|rlm|vu"
         return LLMEditError
     return False
 
@@ -211,7 +211,7 @@ def llm_source_verify(order, page, size, rule, series, name, model_type):
         LLMSourceError['detail'] = "当前参数仅支持中英文以及键盘上的特殊字符,且不超过50字符"
     if model_type and model_type not in ('llm', 'rlm', 'vu'):
         LLMSourceError['description'] = "model_type 参数不符合规范"
-        LLMSourceError['detail'] = "当前参数仅支持 llm|rlm"
+        LLMSourceError['detail'] = "当前参数仅支持 llm|rlm|vu"
         return LLMSourceError
     return False
 

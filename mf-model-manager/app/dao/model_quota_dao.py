@@ -286,6 +286,14 @@ class ModelQuotaDao():
     @connect_execute_close_db
     def get_user_quota_model_by_user_id(self, userId, page, size, api_model, order, rule, quota, model_type, connection,
                                         cursor):
+        # 构建基础WHERE条件
+        if model_type:
+            where_clause = f"""where (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+       or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        else:
+            where_clause = f"""where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+       or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                 t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                 t_llm_model.f_model, t_llm_model.f_model_config, t_llm_model.f_model_id, 
@@ -297,8 +305,7 @@ class ModelQuotaDao():
                 from t_model_quota_config 
                 left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                 right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id
-                where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-       or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+                {where_clause}"""
         if api_model is not None and api_model != "":
             sql += " and BINARY t_llm_model.f_model = %s " % api_model
         if quota is not None:
@@ -306,8 +313,6 @@ class ModelQuotaDao():
                 sql += " and t_llm_model.f_quota = 1 "
             else:
                 sql += " and t_llm_model.f_quota = 0 "
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
@@ -317,6 +322,15 @@ class ModelQuotaDao():
         
         cursor.execute(sql)
         res1 = cursor.fetchall()
+        
+        # 构建第二个查询的WHERE条件
+        if model_type:
+            where_clause2 = f"""where (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                        or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        else:
+            where_clause2 = f"""where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                        or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                         t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                         t_llm_model.f_model_name, t_user_quota_config.f_create_time, t_llm_model.f_model_id, 
@@ -325,8 +339,7 @@ class ModelQuotaDao():
                         from t_model_quota_config 
                         left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                         right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id
-                        where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-                        or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+                        {where_clause2}"""
         if api_model is not None and api_model != "":
             sql += "and BINARY t_llm_model.f_model = '%s' " % api_model
         if quota is not None:
@@ -334,8 +347,6 @@ class ModelQuotaDao():
                 sql += "and t_llm_model.f_quota = 1 "
             else:
                 sql += "and t_llm_model.f_quota = 0 "
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
@@ -344,6 +355,15 @@ class ModelQuotaDao():
         
         cursor.execute(sql)
         res2 = cursor.fetchall()
+        
+        # 构建第三个查询的WHERE条件
+        if model_type:
+            where_clause3 = f"""where (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                                        or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        else:
+            where_clause3 = f"""where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                                        or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                                         t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                                         t_llm_model.f_model_name, t_user_quota_config.f_create_time, t_llm_model.f_model_id, 
@@ -351,10 +371,7 @@ class ModelQuotaDao():
                                         from t_model_quota_config 
                                         left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                                         right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id
-                                        where (t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-                                        or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')"""
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
+                                        {where_clause3}"""
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
@@ -384,6 +401,17 @@ class ModelQuotaDao():
                                                    model_type,
                                                    connection, cursor):
         admin_id = "266c6a42-6131-4d62-8f39-853e7093701c"
+        
+        # 构建基础WHERE条件
+        if model_type:
+            where_clause = f"""where ((t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')) 
+                         and (t_llm_model.f_model_name like '%{name}%' or t_llm_model.f_model like '%{name}%')"""
+        else:
+            where_clause = f"""where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')) 
+                         and (t_llm_model.f_model_name like '%{name}%' or t_llm_model.f_model like '%{name}%')"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                         t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                         t_llm_model.f_model_config, 
@@ -396,13 +424,9 @@ class ModelQuotaDao():
                         from t_model_quota_config 
                         left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                         right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id 
-                        where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}')) 
-                         and (t_llm_model.f_model_name like '%{name}%' or t_llm_model.f_model like '%{name}%')"""
+                        {where_clause}"""
         if api_model is not None and api_model != "":
             sql += " and BINARY t_llm_model.f_model = '%s' " % api_model
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
@@ -410,6 +434,17 @@ class ModelQuotaDao():
         sql += f" limit {int(size) * (int(page) - 1)}, {size}"
         cursor.execute(sql)
         res1 = cursor.fetchall()
+        
+        # 构建第二个查询的WHERE条件
+        if model_type:
+            where_clause2 = f"""where ((t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))  and (t_llm_model.f_model_name like '%{name}%' or 
+                                t_llm_model.f_model like '%{name}%')"""
+        else:
+            where_clause2 = f"""where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))  and (t_llm_model.f_model_name like '%{name}%' or 
+                                t_llm_model.f_model like '%{name}%')"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                                 t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                                 t_llm_model.f_model_name, t_user_quota_config.f_create_time, t_llm_model.f_model_id, 
@@ -418,13 +453,9 @@ class ModelQuotaDao():
                                 from t_model_quota_config 
                                 left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                                 right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id 
-                                where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))  and (t_llm_model.f_model_name like '%{name}%' or 
-                                t_llm_model.f_model like '%{name}%')"""
+                                {where_clause2}"""
         if api_model is not None and api_model != "":
             sql += "and BINARY t_llm_model.f_model = '%s' " % api_model
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
@@ -432,6 +463,15 @@ class ModelQuotaDao():
         sql += f" limit {int(size) * (int(page) - 1)}, {size}"
         cursor.execute(sql)
         res2 = cursor.fetchall()
+        
+        # 构建第三个查询的WHERE条件
+        if model_type:
+            where_clause3 = f"""where ((t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_model_type = '{model_type}' and t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))"""
+        else:
+            where_clause3 = f"""where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
+                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))"""
+        
         sql = f"""select t_user_quota_config.f_id, t_user_quota_config.f_model_conf, t_user_quota_config.f_user_id, 
                                 t_user_quota_config.f_input_tokens, t_user_quota_config.f_output_tokens, t_llm_model.f_model, 
                                 t_llm_model.f_model_name, t_user_quota_config.f_create_time, t_llm_model.f_model_id, 
@@ -439,10 +479,7 @@ class ModelQuotaDao():
                                 from t_model_quota_config 
                                 left join t_user_quota_config on t_user_quota_config.f_model_conf = t_model_quota_config.f_id 
                                 right join t_llm_model on t_llm_model.f_model_id = t_model_quota_config.f_model_id 
-                                where ((t_llm_model.f_quota = 0 and (t_user_quota_config.f_user_id is null or t_user_quota_config.f_user_id = '{userId}'))
-                         or (t_llm_model.f_quota = 1 and t_user_quota_config.f_user_id = '{userId}'))"""
-        if model_type:
-            sql += f" and t_llm_model.f_model_type = '{model_type}'"
+                                {where_clause3}"""
         if rule != "":
             sql += " order by t_llm_model.f_" + rule
         if order == "desc":
