@@ -1,3 +1,4 @@
 packages:
   - 'applications/*'
   - 'packages/*'
+  - 'applications/deploy-web/*'

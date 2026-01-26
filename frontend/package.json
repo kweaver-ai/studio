@@ -18,7 +18,9 @@
     "model-manager:format": "pnpm -F model-manager format",
     "model-manager:dev": "pnpm -F model-manager dev",
     "model-manager:build": "pnpm -F model-manager build",
-    "model-manager:analyze": "pnpm -F model-manager build:analyze"
+    "model-manager:analyze": "pnpm -F model-manager build:analyze",
+    "deploy-web-static:build": "pnpm -F deploy-web-static build",
+    "deploy-web-service:build": "pnpm -F deploy-web-service build"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
