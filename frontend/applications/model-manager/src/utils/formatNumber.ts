@@ -12,7 +12,7 @@ const formatNumber = (num: number | string, type: 'en-us' | 'zh-cn' | 'zh-tw' = 
 
   const [integer, decimal] = absoluteStr.split('.');
 
-  const step = type === 'zh-cn' ? 4 : 3;
+  const step = type === 'zh-cn' ? 3 : 3;
   const reg = new RegExp(`\\B(?=(\\d{${step}})+(?!\\d))`, 'g');
 
   const formattedInteger = integer.replace(reg, ',');
