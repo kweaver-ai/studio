@@ -77,7 +77,7 @@
       "batchSizeTip3": "String array input: The array can contain up to 10 elements.",
       "batchSizeTip4": "Text input: Text files can contain up to 10 lines of text.",
       "attentionUppercaseAndLowercase": "(When filling in fields, please pay attention to distinguishing between uppercase and lowercase letters)",
-      "quotaTitle": "The model token uses quota function",
+      "quotaTitle": "Enable model token quota",
       "quotaTitleDescribe1": "- After enabling the function, you need to go to the [Quota Management] to allocate the upper limit of the usage limit of the model and assign the corresponding limit to the user.",
       "quotaTitleDescribe2": "- After disabling the function, there is no need to configure usage quotas, and all users can use it without restrictions.",
       "quotaTitleDescribe2_": "- After disabling the function, there is no need to configure usage quotas, and all users can use it without restrictions, And the system will automatically retain the credit limit records previously used by the user, but will reset the previously set 'credit limit rules' to zero."
