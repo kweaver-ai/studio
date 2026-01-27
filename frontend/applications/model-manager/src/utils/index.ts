@@ -2,6 +2,7 @@ import Cookie from './cookie';
 import copyToBoard from './copyToBoard';
 import copyToBoardArea from './copyToBoardArea';
 import formatFileSize from './formatFileSize';
+import formatNumber from './formatNumber';
 import { formatTokens } from './formatTokens';
 import getTargetElement from './getTargetElement';
 
@@ -15,6 +16,7 @@ interface UTILS {
   copyToBoard: typeof copyToBoard;
   copyToBoardArea: typeof copyToBoardArea;
   formatFileSize: typeof formatFileSize;
+  formatNumber: typeof formatNumber;
   formatTokens: typeof formatTokens;
   getTargetElement: typeof getTargetElement;
   isInObject: typeof isInObject;
@@ -35,6 +37,7 @@ const UTILS: UTILS = {
   copyToBoard,
   copyToBoardArea,
   formatFileSize,
+  formatNumber,
   formatTokens,
   getTargetElement,
   isInObject,

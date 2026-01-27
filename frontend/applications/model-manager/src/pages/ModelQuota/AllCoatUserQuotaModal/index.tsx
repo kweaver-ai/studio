@@ -7,7 +7,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import UTILS from '@/utils';
 import SERVICE from '@/services';
-import { Button, IconFont, Modal, Table, Select } from '@/common';
+import { Button, IconFont, Modal, Text, Table, Select } from '@/common';
 import ErrorTip from '@/components/ErrorTip';
 import { PRICE_UNIT, CURRENCY_UNIT_KEY_CHANGE } from '@/enums/amount_currency';
 
@@ -61,10 +61,22 @@ const AllCoatUserQuotaModal = (props: any) => {
       setTableLoading(false);
 
       _.map(_.cloneDeep(res?.res), (item: any) => {
-        const { user_id, user_name, input_tokens, output_tokens, conf_id, num_type, user_quota_id } = item;
+        const { user_id, user_name, input_tokens, inputs_left, output_tokens, outputs_left, conf_id, num_type, user_quota_id } = item;
         result = [
           ...result,
-          { user_id, user_name, input_tokens, output_tokens, num_type, user_quota_id, model_quota_id: conf_id, input_status: '', output_status: '' },
+          {
+            user_id,
+            user_name,
+            input_tokens,
+            inputs_left,
+            output_tokens,
+            outputs_left,
+            num_type,
+            user_quota_id,
+            model_quota_id: conf_id,
+            input_status: '',
+            output_status: '',
+          },
         ];
       });
 
@@ -449,21 +461,26 @@ const AllCoatUserQuotaModal = (props: any) => {
       dataIndex: 'input_tokens',
       render: (text: any, record: any) => {
         return (
-          <div className='g-flex-space-between'>
-            <ErrorTip errorText={record?.input_status}>
-              <InputNumber
-                {...inputProps(text)}
-                addonAfter={selectAfter(record, 'in')}
-                status={record?.input_status ? 'error' : ''}
-                onChange={(value: any) => {
-                  let _value = parseFloat(value);
-                  _value = Number.isNaN(_value) ? 1 : _value;
-                  onUpdateData(_value, record, 'input_tokens');
-                }}
-              />
-            </ErrorTip>
-            <div className='g-ml-2' style={{ minWidth: 40, textAlign: 'right' }}>
-              / {intl.get('modelQuota.month')}
+          <div>
+            <div className='g-flex-space-between'>
+              <ErrorTip errorText={record?.input_status}>
+                <InputNumber
+                  {...inputProps(text)}
+                  addonAfter={selectAfter(record, 'in')}
+                  status={record?.input_status ? 'error' : ''}
+                  onChange={(value: any) => {
+                    let _value = parseFloat(value);
+                    _value = Number.isNaN(_value) ? 1 : _value;
+                    onUpdateData(_value, record, 'input_tokens');
+                  }}
+                />
+              </ErrorTip>
+              <div className='g-ml-2' style={{ minWidth: language === 'en-us' ? 60 : 30, textAlign: 'right' }}>
+                / {intl.get('modelQuota.month')}
+              </div>
+            </div>
+            <div className='g-mt-1'>
+              {intl.get('modelQuota.remainingMonth')}: <Text className='g-c-primary'>{UTILS.formatNumber(record?.inputs_left, language)}</Text>
             </div>
           </div>
         );
@@ -473,21 +490,26 @@ const AllCoatUserQuotaModal = (props: any) => {
       title: intl.get('modelQuota.outCount'),
       dataIndex: 'output_tokens',
       render: (text: any, record: any) => (
-        <div className='g-flex-space-between'>
-          <ErrorTip errorText={record?.output_status}>
-            <InputNumber
-              {...inputProps(text)}
-              addonAfter={selectAfter(record, 'out')}
-              status={record?.output_status ? 'error' : ''}
-              onChange={(value: any) => {
-                let _value = parseFloat(value);
-                _value = Number.isNaN(_value) ? 1 : _value;
-                onUpdateData(_value, record, 'output_tokens');
-              }}
-            />
-          </ErrorTip>
-          <div className='g-ml-2' style={{ minWidth: 40, textAlign: 'right' }}>
-            / {intl.get('modelQuota.month')}
+        <div>
+          <div className='g-flex-space-between'>
+            <ErrorTip errorText={record?.output_status}>
+              <InputNumber
+                {...inputProps(text)}
+                addonAfter={selectAfter(record, 'out')}
+                status={record?.output_status ? 'error' : ''}
+                onChange={(value: any) => {
+                  let _value = parseFloat(value);
+                  _value = Number.isNaN(_value) ? 1 : _value;
+                  onUpdateData(_value, record, 'output_tokens');
+                }}
+              />
+            </ErrorTip>
+            <div className='g-ml-2' style={{ minWidth: language === 'en-us' ? 60 : 30, textAlign: 'right' }}>
+              / {intl.get('modelQuota.month')}
+            </div>
+          </div>
+          <div className='g-mt-1'>
+            {intl.get('modelQuota.remainingMonth')}: <Text className='g-c-primary'>{UTILS.formatNumber(record?.outputs_left, language)}</Text>
           </div>
         </div>
       ),
@@ -501,22 +523,27 @@ const AllCoatUserQuotaModal = (props: any) => {
       width: 322,
       render: (text: any, record: any) => {
         return (
-          <div className='g-flex-space-between'>
-            <ErrorTip errorText={record?.input_status}>
-              <InputNumber
-                {...inputProps(text)}
-                style={{ width: 270 }}
-                addonAfter={selectAfter(record, 'in')}
-                status={record?.input_status ? 'error' : ''}
-                onChange={(value: any) => {
-                  let _value = parseFloat(value);
-                  _value = Number.isNaN(_value) ? 1 : _value;
-                  onUpdateData(_value, record, 'input_tokens');
-                }}
-              />
-            </ErrorTip>
-            <div className='g-ml-2' style={{ minWidth: 40, textAlign: 'right' }}>
-              / {intl.get('modelQuota.month')}
+          <div>
+            <div className='g-flex-space-between'>
+              <ErrorTip errorText={record?.input_status}>
+                <InputNumber
+                  {...inputProps(text)}
+                  style={{ width: 270 }}
+                  addonAfter={selectAfter(record, 'in')}
+                  status={record?.input_status ? 'error' : ''}
+                  onChange={(value: any) => {
+                    let _value = parseFloat(value);
+                    _value = Number.isNaN(_value) ? 1 : _value;
+                    onUpdateData(_value, record, 'input_tokens');
+                  }}
+                />
+              </ErrorTip>
+              <div className='g-ml-2' style={{ minWidth: 40, textAlign: 'right' }}>
+                / {intl.get('modelQuota.month')}
+              </div>
+            </div>
+            <div className='g-mt-1'>
+              {intl.get('modelQuota.remainingMonth')}: <Text className='g-c-primary'>{UTILS.formatNumber(record?.inputs_left, language)}</Text>
             </div>
           </div>
         );
