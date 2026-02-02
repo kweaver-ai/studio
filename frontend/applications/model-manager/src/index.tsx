@@ -7,6 +7,7 @@ import '@/styles/global.less';
 import 'react-resizable/css/styles.css';
 import { baseConfig } from '@/services/request';
 import App from './pages/router';
+import Plugins_ModelUsage_App from './plugins/ModelUsage/router'
 
 const originalError = console.error;
 console.error = (...args) => {
@@ -26,7 +27,11 @@ const render = (props: any) => {
 
   UTILS.SessionStorage.set('quotaTip', true); //
   root = root || ReactDOM.createRoot(container);
-  root.render(<App {...props} />);
+  if (props?.isPlugin && props?.name === 'model-usage-modal') {
+		root.render(<Plugins_ModelUsage_App {...props} />);
+	} else {
+		root.render(<App {...props} />);
+	}
 };
 
 if (!(window as any).__POWERED_BY_QIANKUN__) {
