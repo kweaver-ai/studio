@@ -151,5 +151,21 @@ spec:
                       }
                     }
                   }
+                },
+                {
+                  "name": "model-usage-modal",
+                  "parent": "plugins",
+                  "orderIndex": 0,
+                  "app": {
+                    "textZHCN": "模型用量弹窗",
+                    "textZHTW": "模型用量弹窗",
+                    "textENUS": "模型用量弹窗",
+                    "icon": ""
+                  },
+                  "subapp": {
+                    "entry": "//ip:port/mf-model-manager/index.html",
+                    "baseRouter": "",
+                    "activeRule": "/"
+                  }
                 }
               ]' http://studio-web-service:8877/api/workstation/v1/webapp
