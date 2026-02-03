@@ -159,6 +159,8 @@ export default i18n([
         "您即將離開編輯選單介面，尚未儲存的內容在離開後將全部清空，請確認是否離開？",
         "You are about to leave the edit menu interface. Any unsaved changes will be lost. Are you sure you want to leave?",
     ],
+    ["模型用量", "模型用量", "Model Usage"],
+    ["查看模型用量错误", "查看模型用量錯誤", "Error In Checking Model Usage."],
     home,
     license,
     client,

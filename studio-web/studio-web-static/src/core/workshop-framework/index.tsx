@@ -1,6 +1,6 @@
 import * as React from "react";
 import __ from "../../locale";
-import { ObjectType } from "qiankun";
+import { ObjectType, loadMicroApp } from "qiankun";
 import {
     Locale,
     Config as WorkShopFrameWorkConfig,
@@ -42,12 +42,47 @@ import {
 import { microWidgetInfosStore } from "../microWidgetProps/store";
 import Icon from "@ant-design/icons";
 import { SystemRoleType } from "../roles";
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 import { getSearchQuerys } from "../bootstrap";
 import { BusinessDomain } from "../../components/business-domain";
 import { BusinessDomainConfig } from "../../api/business-domain/declare";
 
 const event = new Event();
+
+// 加载模型用量子应用的函数
+const loadModelUsageApp = (microProps: any) => {
+    if (document.getElementById("model-usage-app-container")) return;
+
+    // 创建一个临时容器用于加载子应用
+    const appContainer = document.createElement("div");
+    appContainer.id = "model-usage-app-container";
+    document.body.appendChild(appContainer);
+
+    // 加载子应用
+    try {
+        const microApp = loadMicroApp({
+            name: "model-usage-modal",
+            entry: microProps.config.getMicroWidgetByName(
+                "model-usage-modal",
+                true
+            ).subapp.entry,
+            container: appContainer,
+            props: {
+                ...microProps,
+                onPluginClose: () => {
+                    microApp.unmount();
+                    document.body.removeChild(appContainer);
+                },
+                isPlugin: true,
+            },
+        });
+    } catch (error) {
+        message.error(__("查看模型用量错误"));
+        // 清理容器
+        document.body.removeChild(appContainer);
+    }
+};
+
 
 export const getWorkShopFrameWorkConfig = (
     lang: Locale,
@@ -55,7 +90,8 @@ export const getWorkShopFrameWorkConfig = (
     userInfo: UserInfo,
     oemConfig: OemConfigInfo,
     navItems: any,
-    onChangePwd: () => void
+    onChangePwd: () => void,
+    microProps: any
 ): WorkShopFrameWorkConfig => {
     const logo = oemConfig["logo.png"][lang],
         theme = oemConfig["theme"],
@@ -109,6 +145,12 @@ export const getWorkShopFrameWorkConfig = (
                 );
             },
         },
+        {
+            name: "model-usage-modal",
+            listener: () => {
+                loadModelUsageApp(microProps);
+            },
+        },
     ];
 
     eventMap.forEach(({ name, listener }) => {
@@ -147,6 +189,7 @@ export const getWorkShopFrameWorkConfig = (
                         case name === "online-help":
                         case name === "user-agreement":
                         case name === "privacy-policy":
+                        case name === "model-usage-modal":
                             event.trigger(name);
                             break;
                         default:
@@ -282,6 +325,14 @@ export function workShopFrameWorkConfigFactory(
         ...appConfig,
         nav: {
             ...appConfig.nav,
+            account: {
+                ...appConfig.nav.account,
+                items: appConfig.nav.account.items.filter(
+                    (item: { key: string }) =>
+                        item.key !== "model-usage-modal" ||
+                        pluginsRegistryInfo["model-usage-modal"]
+                ),
+            },
             menu: {
                 ...appConfig.nav.menu,
                 sideBarMethods: {
