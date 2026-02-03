@@ -103,6 +103,11 @@ export function getNavItem(
     userInfo: UserInfo
 ) {
     const navItem = [
+        {
+            label: __("模型用量"),
+            key: "model-usage-modal",
+            divider: true,
+        },
         userInfo?.user?.userType === 1
             ? {
                   label: __("修改密码"),
@@ -132,6 +137,7 @@ export function getNavItem(
                       return moduleConfigs.languages.config.includes(item.key);
                   }),
                   defaultSelectedKeys: [lang],
+                  divider: true,
               }
             : null,
         {
@@ -268,14 +274,6 @@ export const getDefaultAppConfig = async (
 ): Promise<
     [boolean, WorkShopFrameWorkConfig, { [key: string]: RegistryInfo }]
 > => {
-    const _appConfig: WorkShopFrameWorkConfig = getWorkShopFrameWorkConfig(
-        lang,
-        domainInfo,
-        userInfo!,
-        oemConfig,
-        getNavItem(moduleConfigs, lang, userInfo),
-        onChangePwd
-    );
     const urlPrefix = URLPrefixFormatter(prefix, URL_PREFIX_MODE.tail);
     const props = {
         lang,
@@ -301,6 +299,18 @@ export const getDefaultAppConfig = async (
         userInfo,
         prefix: urlPrefix,
     });
+    const _appConfig: WorkShopFrameWorkConfig = getWorkShopFrameWorkConfig(
+        lang,
+        domainInfo,
+        userInfo!,
+        oemConfig,
+        getNavItem(moduleConfigs, lang, userInfo),
+        onChangePwd,
+        {
+            ...props,
+            ...extraProps,
+        }
+    );
 
     if (isDefault) {
         return [
