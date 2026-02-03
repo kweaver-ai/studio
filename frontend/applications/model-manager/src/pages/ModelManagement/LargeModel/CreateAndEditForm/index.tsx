@@ -6,6 +6,7 @@ import { EditOutlined } from '@ant-design/icons';
 
 import ENUMS from '@/enums';
 import HOOKS from '@/hooks';
+import UTILS from '@/utils';
 import { Button, Form, Input, Select } from '@/common';
 import { MODEL_TYPE_OPTIONS, AUTH_OPTIONS } from '../enums';
 
@@ -39,6 +40,7 @@ const unitSuffix = (unit: string) => (
 
 /** 创建和编辑弹窗 */
 const CreateAndEditForm = (props: CreateAndEditFormProps) => {
+   const language = UTILS.SessionStorage.get('language') || 'zh-cn';
   const { form, type, sourceData = {}, onToEdit } = props;
   const { baseProps } = HOOKS.useGlobalContext();
   const isAdmin = baseProps?.username === 'admin';
@@ -53,8 +55,8 @@ const CreateAndEditForm = (props: CreateAndEditFormProps) => {
       name='large-model-create-and-edit-form'
       form={form}
       labelAlign='left'
-      labelCol={{ span: 7 }}
-      wrapperCol={{ span: 19 }}
+      labelCol={{ span: language === 'en-us' ? 8 : 7 }}
+      wrapperCol={{ span: language === 'en-us' ? 18 : 19 }}
       colon={type === 'view'}
       initialValues={{
         model_type: 'llm',

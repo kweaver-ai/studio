@@ -57,7 +57,6 @@ const Summary = (props: any) => {
       seriesData_output.push(UTILS.formatTokens(item?.output_tokens, unit));
     });
 
-    console.log('seriesData_output', { seriesData_input, seriesData_output });
     const result: any = {
       tooltip: { trigger: 'axis' },
       grid: { top: 10, left: 14, right: 34, bottom: 24, containLabel: true },
