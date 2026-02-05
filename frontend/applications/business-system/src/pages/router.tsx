@@ -37,10 +37,11 @@ const App = (props: any) => {
 
     // as 组件配置
     if ((window as any).__POWERED_BY_QIANKUN__) {
-      const { protocol = 'https:', host = location.hostname, port = 443, lang, token, prefix = '', oemConfigs } = props;
+      const { lang, token, prefix = '', oemConfigs } = props
+      const { protocol = 'https:', hostname, port = 443 } = props?.config?.systemInfo?.location;
       const config = {
         protocol,
-        host,
+        host: hostname,
         port,
         lang,
         getToken: () => token?.getToken.access_token,
