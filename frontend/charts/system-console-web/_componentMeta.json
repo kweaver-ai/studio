@@ -1,8 +1,8 @@
 {
     "conponentDefineType": "helm/service",
-    "name": "deploy-web",
+    "name": "system-console-web",
     "configSchema": {
-        "title": "deploy-web",
+        "title": "system-console-web",
         "description": "组件配置定义",
         "type": "object",
         "properties": {

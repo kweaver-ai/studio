@@ -61,7 +61,7 @@ imagePullSecrets: []
 ingress:
   annotations: {}
 maxReplicaCount: 0
-name: deploy-web
+name: system-console-web
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}
