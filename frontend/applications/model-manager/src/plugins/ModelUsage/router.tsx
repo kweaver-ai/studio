@@ -8,8 +8,8 @@ import zhCN from 'antd/locale/zh_CN';
 
 import locales from '@/locales';
 
-import THEME from '@style/theme/theme.ts';
-import { prefixClsManager } from '@style/variable';
+import THEME from '@/theme.ts';
+import { prefixCls } from '@/variable';
 
 import ModelUsage from './pages'
 
@@ -31,7 +31,7 @@ const App = (props: any) => {
       locale={language === 'en-us' ? enUS : zhCN}
       wave={{ disabled: true }}
       theme={theme as ThemeConfig}
-      prefixCls={`${prefixClsManager}-ant`}
+      prefixCls={`${prefixCls}-ant`}
       getPopupContainer={() => document.getElementById('mf-model-manager-root') || container!}
       getTargetContainer={() => document.getElementById('mf-model-manager-root') || container!}
     >
