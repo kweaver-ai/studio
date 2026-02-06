@@ -161,6 +161,7 @@ export default i18n([
     ],
     ["模型用量", "模型用量", "Model Usage"],
     ["查看模型用量错误", "查看模型用量錯誤", "Error In Checking Model Usage."],
+    ["业务知识网络", "业务知识网络", "Business Knowledge Network"],
     home,
     license,
     client,

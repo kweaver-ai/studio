@@ -212,6 +212,9 @@ declare module "@kweaver-ai/workshop-framework-studio" {
 
             // 所属业务域
             businessDomainText?: string;
+
+            // 平台名称
+            platformName?: string;
         };
 
         /**
