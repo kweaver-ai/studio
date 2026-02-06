@@ -25,8 +25,8 @@ depServices:
   rds:
     host: "rds-proton-rds-mariadb-cluster"
     port: "3320"
-    user: "anydata"
-    password: "Qwe123!@#"
+    user: 'username'
+    password: 'password'
     type: ""
     database: "adp"
     maxConnections: 5
