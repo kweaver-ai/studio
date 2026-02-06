@@ -83,7 +83,6 @@ const loadModelUsageApp = (microProps: any) => {
     }
 };
 
-
 export const getWorkShopFrameWorkConfig = (
     lang: Locale,
     domain: Domain,
@@ -168,10 +167,10 @@ export const getWorkShopFrameWorkConfig = (
         // },
         nav: {
             logo: logo,
-            onLogoClick: (isEditing: boolean) =>
-                existEditingConfirm(isEditing, theme!, () =>
-                    window.location.assign(homePathname)
-                ),
+            // onLogoClick: (isEditing: boolean) =>
+            //     existEditingConfirm(isEditing, theme!, () =>
+            //         window.location.assign(homePathname)
+            //     ),
             theme: theme,
             themeMode: "light" as ThemeModeType,
             account: {
@@ -363,6 +362,7 @@ export function workShopFrameWorkConfigFactory(
                 businessDomainList.find(
                     (item) => item.id === props.businessDomainID
                 )?.name || "",
+            platformName: __("业务知识网络"),
         },
         microfrontedLoadingMode: "manual" as MicrofrontedLoadingMode,
     };

@@ -11,14 +11,14 @@ const pngDefault: PNGLang = {
 
 export const oemConfigDefault: OemConfigInfo = {
     product: {
-        "zh-cn": "AI Data Platform",
-        "zh-tw": "AI Data Platform",
-        "en-us": "AI Data Platform",
+        "zh-cn": "业务知识网络",
+        "zh-tw": "业务知识网络",
+        "en-us": "Business Knowledge Network",
     },
     portalBanner: {
-        "zh-cn": "AI Data Platform",
-        "zh-tw": "AI Data Platform",
-        "en-us": "AI Data Platform",
+        "zh-cn": "业务知识网络",
+        "zh-tw": "业务知识网络",
+        "en-us": "Business Knowledge Network",
     },
     "darklogo.png": {
         "zh-cn": darkLogo,

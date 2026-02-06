@@ -151,7 +151,7 @@ export const getMicroWidgetProps = ({
                     name
                 );
                 window.open(
-                    `${location.protocol}//${location.hostname}${prefix}/studio${micoroWidgetInfo?.app?.pathname}${path}`,
+                    `${location.protocol}//${location.host}${prefix}/studio${micoroWidgetInfo?.app?.pathname}${path}`,
                     isNewTab ? "_blank" : "_self"
                 );
             },
