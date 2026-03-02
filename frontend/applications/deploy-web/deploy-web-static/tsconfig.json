@@ -23,7 +23,8 @@
     "strict": true,
     "noEmit": true,
     "downlevelIteration": true,
-    "jsx": "react"
+    "jsx": "react",
+    "paths": { "react": ["./node_modules/@types/react"] }
   },
   "include": [
     "src",
