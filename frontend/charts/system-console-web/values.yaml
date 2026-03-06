@@ -47,12 +47,17 @@ depServices:
 env:
   timezone: Asia/Shanghai
 image:
+  business_system:
+    pullPolicy: IfNotPresent
+    repository: dip/business-system-frontend
+    tag: 1.0.2.3
+    name: business-system-frontend
   deploy_web_service:
-    pullPolicy: ifNotPresent
+    pullPolicy: IfNotPresent
     repository: dip/deploy-web-service
     tag: -mission
   deploy_web_static:
-    pullPolicy: ifNotPresent
+    pullPolicy: IfNotPresent
     repository: dip/deploy-web-static
     tag: -mission
   pullPolicy: IfNotPresent
@@ -60,6 +65,8 @@ image:
 imagePullSecrets: []
 ingress:
   annotations: {}
+  rps:
+    limit: 2000 # rps：每秒多少请求 超过之后就报错 https status: 503
 maxReplicaCount: 0
 name: system-console-web
 nameOverride: ""

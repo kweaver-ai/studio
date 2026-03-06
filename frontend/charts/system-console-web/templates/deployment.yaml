@@ -46,6 +46,9 @@ spec:
       - name: depservice
         configMap:
           name: {{ include "template.fullname" $}}
+      - name: host-time
+        hostPath:
+          path: /etc/localtime
       containers:
         - name: deploy-web-service
           securityContext:
@@ -139,6 +142,48 @@ spec:
           - name: {{ $k | quote }}
             value: {{ $v | quote }}
           {{- end }}
+        - name: business-system-frontend
+          image: "{{ .Values.image.registry }}{{ .Values.image.business_system.repository }}:{{ .Values.image.business_system.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: businesshttp
+              containerPort: 88
+            - name: businesshttps
+              containerPort: 440
+          volumeMounts:
+            - name: host-time
+              mountPath: /etc/localtime
+          resources:
+            requests:
+              cpu: 150m
+              memory: 250Mi
+            limits:
+              cpu: 2
+              memory: 2Gi
+          livenessProbe:
+            tcpSocket:
+              port: 88
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 88
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            tcpSocket:
+              port: 88
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
         {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
