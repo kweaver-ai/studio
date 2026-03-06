@@ -77,3 +77,30 @@ spec:
   selector:
     {{- include "template.selectorLabels" $ | nindent 4 }}
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ $.Values.namespace | default $.Release.Namespace }}
+  name: {{ $.Values.image.model_manager.name }}
+  labels:
+    {{- include "template.labels" $ | nindent 4 }}
+spec:
+  type: "ClusterIP"
+  {{- if $.Values.service.enableDualStack }}
+  ipFamilies:
+  - IPv6
+  - IPv4
+  ipFamilyPolicy: PreferDualStack
+  {{- end }}
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    {{- include "template.selectorLabels" $ | nindent 4 }}

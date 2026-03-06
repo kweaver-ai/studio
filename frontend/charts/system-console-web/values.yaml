@@ -60,6 +60,11 @@ image:
     pullPolicy: IfNotPresent
     repository: dip/deploy-web-static
     tag: -mission
+  model_manager:
+    pullPolicy: IfNotPresent
+    repository: dip/mf-model-manager-nginx
+    tag: 1.0.2.3
+    name: mf-model-manager-nginx
   pullPolicy: IfNotPresent
   registry: acr.aishu.cn
 imagePullSecrets: []
