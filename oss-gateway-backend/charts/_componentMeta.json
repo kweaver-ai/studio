@@ -1,9 +1,9 @@
 {
   "conponentDefineType": "helm/service",
-  "name": "oss-gateway",
+  "name": "oss-gateway-backend",
   "version": "1.0.0",
   "configSchema": {
-    "title": "oss-gateway",
+    "title": "oss-gateway-backend",
     "description": "组件配置定义",
     "type": "object",
     "properties": {

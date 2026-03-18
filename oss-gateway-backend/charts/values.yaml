@@ -4,10 +4,10 @@ namespace: dip
 
 image:
   registry: acr.aishu.cn
-  repository: /dip/oss-gateway
+  repository: /dip/oss-gateway-backend
   tag: 5.0.0
   pullPolicy: IfNotPresent
-  name: oss-gateway
+  name: oss-gateway-backend
 
 service:
   enableDualStack: false
