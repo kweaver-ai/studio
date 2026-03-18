@@ -55,7 +55,7 @@ export default class ChangePassword extends ChangePasswordBase {
                         title={__("提示")}
                         visible={true}
                         onOk={this.props.onUserLocked}
-                        onCancel={() => {}}
+                        onCancel={this.props.onUserLocked}
                         footer={[
                             <Button
                                 type="primary"
@@ -79,7 +79,7 @@ export default class ChangePassword extends ChangePasswordBase {
                         title={__("提示")}
                         visible={true}
                         onOk={this.props.onChangePwdCancel}
-                        onCancel={() => {}}
+                        onCancel={this.props.onChangePwdCancel}
                         footer={[
                             <Button
                                 type="primary"
