@@ -1,6 +1,6 @@
-# 接收构建参数，使用内部镜像仓库（解决网络问题）
-ARG GO_BUILD_IMAGE=golang:1.24.11
-ARG BASE_IMAGE=ubuntu:24.04
+# 全局 ARG：在 FROM 之前声明，才能在 FROM 中使用
+ARG GO_BUILD_IMAGE=swr.cn-east-3.myhuaweicloud.com/kweaver-ai/golang:1.24.11
+ARG BASE_IMAGE=swr.cn-east-3.myhuaweicloud.com/kweaver-ai/ubuntu:24.04
 
 # 构建阶段
 FROM ${GO_BUILD_IMAGE} AS builder
@@ -14,7 +14,8 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o oss-gateway main.go
 
-# 运行阶段
+# 运行阶段 - 需要重新声明 ARG
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
 # Ubuntu 使用 apt-get 安装依赖
