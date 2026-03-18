@@ -4,7 +4,7 @@ ARG BASE_IMAGE=swr.cn-east-3.myhuaweicloud.com/kweaver-ai/ubuntu:24.04
 
 # 构建阶段
 FROM ${GO_BUILD_IMAGE} AS builder
-ARG GOPROXY=https://goproxy.cn,direct
+ARG GOPROXY=https://goproxy.aishu.cn,https://goproxy.cn
 ENV GOPROXY=${GOPROXY}
 WORKDIR /app
 
