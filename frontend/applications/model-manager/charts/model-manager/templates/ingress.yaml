@@ -2,11 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-model-manager-web
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     nginx.ingress.kubernetes.io/limit-rps: "{{ .Values.ingress.rps.limit }}" # rps：每秒多少请求 超过之后就报错 https status: 503
 spec:
-  ingressClassName: class-443
+  ingressClassName: {{ include "mergedGlobalValues.ingressClassName" . }}
   rules:
     - http:
         paths:

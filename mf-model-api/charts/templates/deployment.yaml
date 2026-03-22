@@ -1,10 +1,13 @@
+{{- $depServices := include "mergedGlobalValues.depServices" . | fromYaml -}}
+{{- $configMapName := printf "%s-yaml" .Values.image.name -}}
+{{- $rdsConfVolume := printf "%s-rds-conf" .Values.image.name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.image.name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ include "mergedGlobalValues.replicaCount" . }}
   selector:
     matchLabels:
       app: {{ .Values.image.name }}
@@ -32,7 +35,7 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
-          image: "{{ .Values.image.registry }}{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ include "mergedGlobalValues.image" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: model-factory
@@ -58,7 +61,7 @@ spec:
           volumeMounts:
             - name: host-time
               mountPath: /etc/localtime
-            - name: {{ .Release.Name }}-rds-conf
+            - name: {{ $rdsConfVolume }}
               mountPath: /tmp/rds_conf
           env:
             - name: DEVICE_CODE
@@ -66,236 +69,236 @@ spec:
             - name: RDSHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: RDSHOST
             - name: RDSPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: RDSPORT
             - name: RDSUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: RDSUSER
             - name: RDSPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: RDSPASS
             - name: DB_TYPE
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: DB_TYPE
             - name: RDSDBNAME
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: RDSDBNAME
             - name: OPENSEARCH_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCH_HOST
             - name: OPENSEARCHWRITE
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCHWRITE
             - name: OPENSEARCHREAD
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCHRED
             - name: OPENSEARCH_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCH_PORT
             - name: OPENSEARCH_USER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCH_USER
             - name: OPENSEARCH_PASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OPENSEARCH_PASS
             - name: REDISCLUSTERMODE
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISCLUSTERMODE
             - name: REDISUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISUSER
             - name: REDISPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISPASS
-            {{- if ne .Values.depServices.redis.connectType "master-slave" }}
+            {{- if ne $depServices.redis.connectType "master-slave" }}
             - name: REDISHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISHOST
             - name: REDISPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISPORT
             {{- end }}
-            {{- if eq .Values.depServices.redis.connectType "sentinel" }}
+            {{- if eq $depServices.redis.connectType "sentinel" }}
             - name: SENTINELMASTER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: SENTINELMASTER
             - name: SENTINELUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: SENTINELUSER
             - name: SENTINELPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: SENTINELPASS
             {{- end }}
-            {{- if eq .Values.depServices.redis.connectType "master-slave" }}
+            {{- if eq $depServices.redis.connectType "master-slave" }}
             - name: REDISREADHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISREADHOST
             - name: REDISREADPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISREADPORT
             - name: REDISREADUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISREADUSER
             - name: REDISREADPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISREADPASS
             - name: REDISWRITEHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISWRITEHOST
             - name: REDISWRITEPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISWRITEPORT
             - name: REDISWRITEUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISWRITEUSER
             - name: REDISWRITEPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: REDISWRITEPASS
             {{- end }}
             - name: KAFKAHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: KAFKAHOST
             - name: KAFKAPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: KAFKAPORT
             - name: KAFKAUSER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: KAFKAUSER
             - name: KAFKAPASS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: KAFKAPASS
             # 修复以下三个环境变量的配置
             - name: TEXTVECTORMAPPING
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: TEXTVECTORMAPPING
             - name: VLMVECTORMAPPING
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: VLMVECTORMAPPING
             - name: TEXTRERANKERMAPPING
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: TEXTRERANKERMAPPING
             - name: DM_SVC_PATH
               value: /tmp/rds_conf/
             - name: OAUTHPUBLICHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OAUTHPUBLICHOST
             - name: OAUTHPUBLICPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OAUTHPUBLICPORT
             - name: OAUTHADMINHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OAUTHADMINHOST
             - name: OAUTHADMINPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: OAUTHADMINPORT
             - name: USERMANAGEMENTPUBLICHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: USERMANAGEMENTPUBLICHOST
             - name: USERMANAGEMENTPUBLICPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: USERMANAGEMENTPUBLICPORT
             - name: USERMANAGEMENTPRIVATEHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: USERMANAGEMENTPRIVATEHOST
             - name: USERMANAGEMENTPRIVATEPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: USERMANAGEMENTPRIVATEPORT
             - name: AUTHORIZATIONPRIVATEHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: AUTHORIZATIONPRIVATEHOST
             - name: AUTHORIZATIONPRIVATEPORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
+                  name: {{ $configMapName }}
                   key: AUTHORIZATIONPRIVATEPORT
             # 可观测相关配置
             - name: LOG_ENABLED
@@ -332,9 +335,9 @@ spec:
         - name: host-time
           hostPath:
             path: /etc/localtime
-        - name: {{ .Release.Name }}-rds-conf
+        - name: {{ $rdsConfVolume }}
           configMap:
-            name: {{ .Release.Name }}-yaml
+            name: {{ $configMapName }}
             items:
             - key: dm_svc.conf
               path: dm_svc.conf

@@ -10,7 +10,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  ingressClassName: {{ index .Values.depServices "class-443" "ingressClass" }}
+  ingressClassName: {{ include "mergedGlobalValues.ingressClassName" . }}
   rules:
   - http:
       paths:
@@ -32,7 +32,7 @@ metadata:
   name: {{ include "this-app.name" . }}
   namespace: {{ include "this-app.namespace" . }}
   annotations:
-    kubernetes.io/ingress.class: {{ index .Values.depServices "class-443" "ingressClass" }}
+    kubernetes.io/ingress.class: {{ include "mergedGlobalValues.ingressClassName" . }}
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -45,4 +45,3 @@ spec:
           servicePort: 80
         path: /api/business-system/v1
 {{- end }}
-

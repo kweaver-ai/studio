@@ -1,3 +1,5 @@
+{{- $imageRegistry := include "mergedGlobalValues.imageRegistry" . -}}
+{{- $replicaCount := include "mergedGlobalValues.replicaCount" . | int -}}
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: apps/v1
 {{- else -}}
@@ -6,7 +8,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: {{ include "template.fullname" . }}
-  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "template.labels" . | nindent 4 }}
 spec:
@@ -15,9 +17,9 @@ spec:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   {{ if not .Values.maxReplicaCount}}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ $replicaCount }}
   {{- else }}
-  replicas: {{ min .Values.replicaCount .Values.maxReplicaCount }}
+  replicas: {{ min $replicaCount .Values.maxReplicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -50,7 +52,7 @@ spec:
         - name: studio-web-service
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.studio_web_service.repository }}:{{ .Values.image.studio_web_service.tag }}"
+          image: "{{ $imageRegistry }}/{{ .Values.image.studio_web_service.repository }}:{{ .Values.image.studio_web_service.tag }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           livenessProbe:
             failureThreshold: 5
@@ -98,7 +100,7 @@ spec:
         - name: studio-web-static
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.studio_web_static.repository }}:{{ .Values.image.studio_web_static.tag }}"
+          image: "{{ $imageRegistry }}/{{ .Values.image.studio_web_static.repository }}:{{ .Values.image.studio_web_static.tag }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           livenessProbe:
             failureThreshold: 5
@@ -142,7 +144,7 @@ spec:
         - name: studio-web-backend
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.studio_web_backend.repository }}:{{ .Values.image.studio_web_backend.tag }}"
+          image: "{{ $imageRegistry }}/{{ .Values.image.studio_web_backend.repository }}:{{ .Values.image.studio_web_backend.tag }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           livenessProbe:
             httpGet:

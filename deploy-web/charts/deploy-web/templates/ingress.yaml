@@ -1,16 +1,17 @@
+{{- $depServices := include "mergedGlobalValues.depServices" . | fromYaml -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "template.fullname" . }}
-  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  ingressClassName: {{ index .Values.depServices "class-443" "ingressClass" }}
+  ingressClassName: {{ include "mergedGlobalValues.ingressClassName" . }}
   rules:
   - http:
       paths:
@@ -51,9 +52,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ include "template.fullname" . }}
-  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
-    kubernetes.io/ingress.class: {{ index .Values.depServices "class-443" "ingressClass" }}
+    kubernetes.io/ingress.class: {{ include "mergedGlobalValues.ingressClassName" . }}
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -79,4 +80,3 @@ spec:
         path: /deploy
       
 {{- end }}
-

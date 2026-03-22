@@ -1,21 +1,23 @@
+{{- $depServices := include "mergedGlobalValues.depServices" . | fromYaml -}}
+{{- $imageRegistry := include "mergedGlobalValues.imageRegistry" . -}}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata: 
   name: {{ include "template.fullname" . }}-backend-hook
-  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook-delete-policy: "before-hook-creation"
     helm.sh/hook: "post-install, post-upgrade"
     helm.sh/weight: "0"
 data: 
-  APP_DB_HOST: {{ .Values.depServices.rds.host | quote }}
-  APP_DB_PORT: {{ .Values.depServices.rds.port | quote }}
-  APP_DB_NAME: {{ .Values.depServices.rds.database | quote }}
-  APP_DB_USER: {{ .Values.depServices.rds.user | quote }}
-  APP_DB_PASSWORD: {{ .Values.depServices.rds.password | quote }}
-  APP_DB_TYPE: {{ .Values.depServices.rds.type | upper | quote }}
-  APP_DB_SYSTEMID: {{ .Values.depServices.rds.system_id | default "" | quote }}
+  APP_DB_HOST: {{ $depServices.rds.host | quote }}
+  APP_DB_PORT: {{ $depServices.rds.port | quote }}
+  APP_DB_NAME: {{ $depServices.rds.database | quote }}
+  APP_DB_USER: {{ $depServices.rds.user | quote }}
+  APP_DB_PASSWORD: {{ $depServices.rds.password | quote }}
+  APP_DB_TYPE: {{ $depServices.rds.type | upper | quote }}
+  APP_DB_SYSTEMID: {{ $depServices.rds.system_id | default "" | quote }}
 
 
 ---
@@ -24,7 +26,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "template.fullname" . }}-init-db
-  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook-delete-policy: "before-hook-creation"
     helm.sh/hook: "post-install, post-upgrade"
@@ -41,7 +43,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: studio-web-initdb
-          image: "{{ .Values.image.registry }}/{{ .Values.image.studio_web_backend.repository }}:{{ .Values.image.studio_web_backend.tag }}"
+          image: "{{ $imageRegistry }}/{{ .Values.image.studio_web_backend.repository }}:{{ .Values.image.studio_web_backend.tag }}"
           command: ["./initdb"]
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           envFrom:

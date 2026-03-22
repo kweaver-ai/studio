@@ -1,3 +1,4 @@
+{{- $replicaCount := include "mergedGlobalValues.replicaCount" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +7,7 @@ metadata:
   labels:
 {{ include "this-app.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ $replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "this-app.name" . }}
