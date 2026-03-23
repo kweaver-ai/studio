@@ -176,17 +176,17 @@
 
 **字段说明:**
 
-| 字段名            | 类型    | 必填 | 说明                                      |
-|------------------|---------|------|------------------------------------------|
-| storage_name     | string  | 是   | 存储配置的显示名称                         |
-| vendor_type      | string  | 是   | 厂商类型 (OSS/OBS/ECEPH)                  |
-| endpoint         | string  | 是   | 服务端点 URL (必须以 http:// 或 https:// 开头) |
-| bucket_name      | string  | 是   | 存储桶名称                                |
-| access_key_id    | string  | 是   | 访问密钥 ID                               |
-| access_key_secret| string  | 是   | 访问密钥                                  |
-| region           | string  | 条件 | 区域标识符 (OSS/OBS必填，ECEPH可选)        |
+| 字段名            | 类型    | 必填 | 说明                                        |
+|------------------|---------|------|-------------------------------------------|
+| storage_name     | string  | 是   | 存储配置的显示名称                                 |
+| vendor_type      | string  | 是   | 厂商类型 (OSS/OBS/ECEPH)                      |
+| endpoint         | string  | 是   | 服务端点 URL (必须以 http:// 或 https:// 开头)      |
+| bucket_name      | string  | 是   | 存储桶名称                                     |
+| access_key_id    | string  | 是   | 访问密钥 ID,对于私有化部署的ECEPH，该字段对应用户的账户名         |
+| access_key_secret| string  | 是   | 访问密钥                                      |
+| region           | string  | 条件 | 区域标识符 (OSS/OBS必填，ECEPH可选)                 |
 | is_default       | boolean | 否   | 是否设为默认存储（全局只能有一个默认存储，如果系统已存在其他默认存储，创建会失败） |
-| internal_endpoint| string  | 否   | 内网访问端点                              |
+| internal_endpoint| string  | 否   | 内网访问端点                                    |
 
 **默认存储规则：**
 - 系统全局只允许存在一个默认存储
