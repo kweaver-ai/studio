@@ -9,9 +9,6 @@ import (
 )
 
 func NewConfig() *AppConfig {
-	// Apply local configuration first (if environment variables are not set)
-	ApplyLocalConfig()
-
 	var cfg AppConfig
 
 	if err := envconfig.Process("", &cfg); err != nil {

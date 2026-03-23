@@ -16,36 +16,54 @@
 
 所有 API 响应遵循统一格式：
 
-### 成功响应
+### 成功响应（普通接口）
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": { ... }
+}
+```
+
+### 成功响应（列表接口）
+```json
+{
+  "count": 10,
+  "data": [ ... ]
 }
 ```
 
 ### 错误响应
 ```json
 {
-  "code": 400001,
+  "code": "400031101",
   "message": "Invalid parameter",
+  "description": "The parameter 'storage_id' is invalid",
+  "solution": "Please provide a valid storage_id",
   "cause": "storage_id is required"
 }
 ```
 
+**说明：**
+- 成功响应使用 `res: 0` 标识成功，直接在 `data` 字段中返回数据
+- 列表接口使用 `count` 字段表示总数，`data` 字段返回列表数据
+- 错误响应包含详细的错误信息，包括错误码、消息、描述、解决方案和原因
+
 ### 错误码表
 
-| 错误码   | HTTP 状态码 | 描述              |
-|---------|------------|-------------------|
-| 0       | 200        | 成功               |
-| 400000  | 400        | 错误的请求          |
-| 400001  | 400        | 无效的参数          |
-| 400002  | 400        | 无效的文件大小       |
-| 404000  | 404        | 未找到             |
-| 404001  | 404        | 存储配置未找到       |
-| 500000  | 500        | 内部服务器错误       |
-| 500001  | 500        | 连接失败            |
+| 错误码        | HTTP 状态码 | 描述              |
+|--------------|------------|-------------------|
+| 400031100    | 400        | 错误的请求          |
+| 400031101    | 400        | 无效的参数          |
+| 400031102    | 400        | 无效的文件大小       |
+| 400031107    | 400        | 存储名称已存在       |
+| 400031108    | 400        | 存储配置已存在       |
+| 400031109    | 400        | 键数量过多          |
+| 400031110    | 400        | 无效的供应商类型     |
+| 400031112    | 400        | 默认存储已存在       |
+| 404031100    | 404        | 未找到             |
+| 404031101    | 404        | 存储配置未找到       |
+| 500031100    | 500        | 内部服务器错误       |
+| 500031101    | 500        | 连接失败            |
+| 503031100    | 503        | 服务未就绪          |
 
 ---
 
@@ -63,17 +81,24 @@
 |-------------|---------|------|-------------------------------------------|
 | vendor_type | string  | 否   | 厂商类型过滤 (OSS/OBS/ECEPH)               |
 | enabled     | boolean | 否   | 启用状态过滤 (true/false)                  |
+| is_default  | boolean | 否   | 默认存储过滤 (true/false)                  |
 | page        | int     | 否   | 页码，从1开始，默认1                        |
 | size        | int     | 否   | 每页大小，默认10，最大1000                  |
 | order       | string  | 否   | 排序方向 (asc/desc)，默认 desc             |
 | rule        | string  | 否   | 排序字段 (create_time/update_time/storage_name)，默认 update_time |
 | name        | string  | 否   | 存储名称模糊搜索                            |
 
+**示例请求：**
+
+1. 获取所有存储：`GET /storages`
+2. 获取启用的存储：`GET /storages?enabled=true`
+3. 获取默认存储：`GET /storages?is_default=true`
+4. 获取启用的默认存储：`GET /storages?enabled=true&is_default=true`
+5. 按名称搜索：`GET /storages?name=阿里云`
+
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "count": 1,
   "data": [
     {
@@ -110,8 +135,6 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "storage_id": "A1B2C3D4E5F6G7H8",
     "storage_name": "阿里云存储1",
@@ -162,18 +185,28 @@
 | access_key_id    | string  | 是   | 访问密钥 ID                               |
 | access_key_secret| string  | 是   | 访问密钥                                  |
 | region           | string  | 条件 | 区域标识符 (OSS/OBS必填，ECEPH可选)        |
-| is_default       | boolean | 否   | 是否设为默认存储                           |
+| is_default       | boolean | 否   | 是否设为默认存储（全局只能有一个默认存储，如果系统已存在其他默认存储，创建会失败） |
 | internal_endpoint| string  | 否   | 内网访问端点                              |
+
+**默认存储规则：**
+- 系统全局只允许存在一个默认存储
+- 如果创建时设置 `is_default: true`，但系统已存在其他默认存储，则创建失败
+- 错误响应示例：
+```json
+{
+  "code": "400031112",
+  "message": "Default storage already exists",
+  "description": "A default storage already exists: 阿里云存储1",
+  "solution": "Please disable the current default storage before setting a new one"
+}
+```
 
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
-    "storage_id": "A1B2C3D4E5F6G7H8",
-    "status": "ok",
-    "id": "A1B2C3D4E5F6G7H8"
+    "id": "2035957924035170304",
+    "status": "ok"
   }
 }
 ```
@@ -196,18 +229,30 @@
 ```json
 {
   "storage_name": "新名称",
-  "is_enabled": true
+  "is_enabled": true,
+  "is_default": false
+}
+```
+
+**注意事项：**
+- 如果要将存储设置为默认 (`is_default: true`)，但系统中已存在其他默认存储，更新会失败
+- 必须先将其他存储的 `is_default` 设为 `false`，才能设置新的默认存储
+- 错误响应示例（当已存在默认存储时）：
+```json
+{
+  "code": "400031112",
+  "message": "Default storage already exists",
+  "description": "A default storage already exists: 阿里云存储1",
+  "solution": "Please disable the current default storage before setting a new one"
 }
 ```
 
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
-    "status": "ok",
-    "id": "A1B2C3D4E5F6G7H8"
+    "id": "2035957924035170304",
+    "status": "ok"
   }
 }
 ```
@@ -229,11 +274,9 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
-    "status": "ok",
-    "id": "A1B2C3D4E5F6G7H8"
+    "id": "2034170764420321280",
+    "status": "ok"
   }
 }
 ```
@@ -255,8 +298,6 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "connected": true
   }
@@ -290,12 +331,12 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "HEAD",
-    "url": "https://my-bucket.oss-cn-hangzhou.aliyuncs.com/path/to/file.txt?...",
-    "headers": {}
+    "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/test/test.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T060812Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=f60194d088658be26b1d88d132f7acdbfff1f7d29c6c4ea0535f29bf8bdac6e6",
+    "headers": {},
+    "form_field": null,
+    "body": ""
   }
 }
 ```
@@ -338,18 +379,13 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
-    "file1.txt": {
+    "test/test.txt": {
       "method": "HEAD",
-      "url": "https://...",
-      "headers": {}
-    },
-    "file2.txt": {
-      "method": "HEAD",
-      "url": "https://...",
-      "headers": {}
+      "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/test/test.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T060850Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=cfe029b1b7a1a72ea524f7c95b4d7656bae547954a663deb3c5f84fc8bc86b42",
+      "headers": {},
+      "form_field": null,
+      "body": ""
     }
   }
 }
@@ -383,15 +419,12 @@
 **响应示例 (PUT):**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "PUT",
-    "url": "https://my-bucket.oss-cn-hangzhou.aliyuncs.com/test/file.txt?...",
-    "headers": {
-      "Content-Type": "application/octet-stream"
-    },
-    "form_field": {}
+    "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/test/file.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T060933Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=779ed198ce467ba615dd14753a41385993e4e3b8140f7f4dc72a47b203045c0d",
+    "headers": {},
+    "form_field": null,
+    "body": ""
   }
 }
 ```
@@ -399,22 +432,20 @@
 **响应示例 (POST):**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "POST",
-    "url": "https://my-bucket.oss-cn-hangzhou.aliyuncs.com/",
+    "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/",
     "headers": {},
     "form_field": {
-      "OSSAccessKeyId": "LTAI5xxx",
-      "policy": "eyJleHBpcmF0aW9uIjoi...",
-      "Signature": "xxx",
+      "bucket": "oss-yexiaoyan",
       "key": "test/file.txt",
-      "x-oss-signature-version": "OSS2",
-      "x-oss-algorithm": "OSS2-HMAC-SHA256",
-      "x-oss-credential": "...",
-      "x-oss-date": "..."
-    }
+      "policy": "eyJleHBpcmF0aW9uIjoiMjAyNi0wMy0yM1QwNzowOTo0OS4yNTFaIiwiY29uZGl0aW9ucyI6W1siZXEiLCIkYnVja2V0Iiwib3NzLXlleGlhb3lhbiJdLFsiZXEiLCIka2V5IiwidGVzdC9maWxlLnR4dCJdLFsiZXEiLCIkeC1hbXotZGF0ZSIsIjIwMjYwMzIzVDA2MDk0OVoiXSxbImVxIiwiJHgtYW16LWFsZ29yaXRobSIsIkFXUzQtSE1BQy1TSEEyNTYiXSxbImVxIiwiJHgtYW16LWNyZWRlbnRpYWwiLCJMVEFJNXRKM05US2ozb0dtRjdhZzh4N3UvMjAyNjAzMjMvY24tc2hhbmdoYWkvczMvYXdzNF9yZXF1ZXN0Il1dfQ==",
+      "x-amz-algorithm": "AWS4-HMAC-SHA256",
+      "x-amz-credential": "LTAI5tJ3NTKj3oGmF7ag8x7u/20260323/cn-shanghai/s3/aws4_request",
+      "x-amz-date": "20260323T060949Z",
+      "x-amz-signature": "bba105b3d61a3e59f1d8ab37843d80c9cd81adae7081f13ddb11903bf0c3cdad"
+    },
+    "body": ""
   }
 }
 ```
@@ -445,12 +476,10 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
-    "upload_id": "0004B9894A22E5B1F2A2A778BC7D4C19",
+    "upload_id": "7BA9BC4C2C264A8A8C45C21338ED1513",
     "part_size": 5242880,
-    "key": "large-file.zip"
+    "key": "videos/test123.mp4"
   }
 }
 ```
@@ -498,23 +527,42 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "authrequest": {
       "1": {
         "method": "PUT",
-        "url": "https://...?partNumber=1&uploadId=xxx",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        }
+        "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/videos/test123.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061116Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&partNumber=1&uploadId=0004B9894A22E5B1F2A2A778BC7D4C19&X-Amz-Signature=e38428782ba1cffa5cd310bb7e9eff57c0395e0457570550f919e99c6891983d",
+        "headers": {},
+        "form_field": null,
+        "body": ""
       },
       "2": {
         "method": "PUT",
-        "url": "https://...?partNumber=2&uploadId=xxx",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        }
+        "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/videos/test123.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061116Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&partNumber=2&uploadId=0004B9894A22E5B1F2A2A778BC7D4C19&X-Amz-Signature=f948caf1f0f91dfd741920cebf4712a78118da5c8be492287fda68471a3d657d",
+        "headers": {},
+        "form_field": null,
+        "body": ""
+      },
+      "3": {
+        "method": "PUT",
+        "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/videos/test123.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061116Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&partNumber=3&uploadId=0004B9894A22E5B1F2A2A778BC7D4C19&X-Amz-Signature=ca23c7dc47082e003f9c2ed93df5f177678014a2fd39c820d6da026a9322517a",
+        "headers": {},
+        "form_field": null,
+        "body": ""
+      },
+      "4": {
+        "method": "PUT",
+        "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/videos/test123.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061116Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&partNumber=4&uploadId=0004B9894A22E5B1F2A2A778BC7D4C19&X-Amz-Signature=f01e902a16052d74e6620ae99d2f56e8ce50731484b8e4a67054c8fa8cb34e47",
+        "headers": {},
+        "form_field": null,
+        "body": ""
+      },
+      "5": {
+        "method": "PUT",
+        "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/videos/test123.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061116Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&partNumber=5&uploadId=0004B9894A22E5B1F2A2A778BC7D4C19&X-Amz-Signature=e56e1b29862bdfd40d8306f55a5081051ee0a4e7e73c831f610c877256cea003",
+        "headers": {},
+        "form_field": null,
+        "body": ""
       }
     }
   }
@@ -556,8 +604,6 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "POST",
     "url": "https://...?uploadId=xxx",
@@ -597,12 +643,12 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "GET",
-    "url": "https://my-bucket.oss-cn-hangzhou.aliyuncs.com/test/file.txt?...",
-    "headers": {}
+    "url": "https://obs.cn-east-3.myhuaweicloud.com/obs-as7/test/file.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=IEWQ43FVSDUADX40BFNI%2F20260318%2Fcn-east-3%2Fs3%2Faws4_request&X-Amz-Date=20260318T034412Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%2A%3Dutf-8%27%27test.txt&X-Amz-Signature=27f54fbc559da514c1fa4eca2c139dcd8bfc52247cb738c1aaaeb8d5ddc70f35",
+    "headers": {},
+    "form_field": null,
+    "body": ""
   }
 }
 ```
@@ -634,12 +680,12 @@
 **响应示例:**
 ```json
 {
-  "code": 0,
-  "message": "success",
   "data": {
     "method": "DELETE",
-    "url": "https://my-bucket.oss-cn-hangzhou.aliyuncs.com/test/file.txt?...",
-    "headers": {}
+    "url": "https://oss-yexiaoyan.oss-cn-shanghai.aliyuncs.com/test/file.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=LTAI5tJ3NTKj3oGmF7ag8x7u%2F20260323%2Fcn-shanghai%2Fs3%2Faws4_request&X-Amz-Date=20260323T061618Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5c082c9581b206ceaa4e4957b9e28d7fe8723d49c3145b58fb86e72a18a883ed",
+    "headers": {},
+    "form_field": null,
+    "body": ""
   }
 }
 ```
@@ -657,21 +703,25 @@
 **响应示例（就绪）:**
 ```json
 {
-  "status": "ok",
   "checks": {
-    "database": "ok"
-  }
+    "database": "ok",
+    "redis": "ok (standalone)"
+  },
+  "res": 0,
+  "status": "ok"
 }
 ```
 
 **响应示例（未就绪）:**
 ```json
 {
-  "status": "not_ready",
+  "code": "503031100",
+  "message": "Service not ready",
+  "description": "One or more services are not ready",
   "checks": {
-    "database": "failed"
-  },
-  "message": "Some services are not ready"
+    "database": "failed",
+    "redis": "failed"
+  }
 }
 ```
 
@@ -686,14 +736,26 @@
 **响应示例:**
 ```json
 {
-  "status": "ok",
-  "timestamp": "2024-01-01T00:00:00Z"
+  "res": 0,
+  "status": "ok"
 }
 ```
 
 ---
 
 ## 注意事项
+
+### 默认存储
+
+- 系统全局只能有**一个**默认存储
+- **创建存储**：如果设置 `is_default: true`，但系统中已存在其他默认存储，创建会失败（错误码：400031112）
+- **更新存储**：如果要将存储设置为默认（`is_default: true`），但系统中已存在其他默认存储，更新会失败（错误码：400031112）
+- **安全机制**：必须先手动将现有默认存储的 `is_default` 设为 `false`，才能设置新的默认存储
+- **查询默认存储**：
+  - 方法1：`GET /storages?is_default=true` - 直接筛选默认存储
+  - 方法2：`GET /storages?enabled=true&is_default=true` - 筛选启用的默认存储
+  - 返回结果中获取 `storage_id` 用于后续文件操作
+- **注意**：目前所有文件操作接口（上传、下载、删除等）都需要显式指定 `storage_id` 参数，不支持自动使用默认存储
 
 ### URL 编码
 

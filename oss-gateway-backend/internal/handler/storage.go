@@ -35,6 +35,10 @@ func (h *StorageHandler) Create(c *gin.Context) {
 			} else if validationErr.Code == "400031110" {
 				response.InvalidVendorType(c, req.VendorType)
 				return
+			} else if validationErr.Code == "400031112" {
+				// validationErr.Description 已经是完整的错误描述
+				response.DefaultStorageExists(c, validationErr.Description)
+				return
 			}
 		}
 		response.InternalError(c, err.Error())
@@ -57,6 +61,13 @@ func (h *StorageHandler) Update(c *gin.Context) {
 	}
 
 	if err := h.service.Update(c.Request.Context(), storageID, &req); err != nil {
+		// 检查是否是校验错误
+		if validationErr, ok := err.(*service.StorageValidationError); ok {
+			if validationErr.Code == "400031112" {
+				response.DefaultStorageExists(c, validationErr.Description)
+				return
+			}
+		}
 		response.InternalError(c, err.Error())
 		return
 	}

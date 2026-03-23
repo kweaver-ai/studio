@@ -47,6 +47,7 @@ type ListStorageRequest struct {
 	Name       string `form:"name"`        // 模糊搜索存储名称
 	VendorType string `form:"vendor_type"` // 供应商类型过滤
 	Enabled    *bool  `form:"enabled"`     // 启用状态过滤
+	IsDefault  *bool  `form:"is_default"`  // 默认存储过滤
 }
 
 // ListStorageResponse 列表响应
@@ -189,6 +190,20 @@ func (s *storageService) Create(ctx context.Context, req *CreateStorageRequest) 
 
 	storageID := utils.GenerateStorageID()
 
+	// 如果设置为默认存储，先检查是否已存在其他默认存储
+	if req.IsDefault {
+		existingDefault, err := s.repo.HasDefaultStorage(ctx, "")
+		if err == nil && existingDefault != nil {
+			// 已存在默认存储，拒绝创建
+			return "", &StorageValidationError{
+				Code:        errors.DefaultStorageExists.Code,
+				Message:     errors.DefaultStorageExists.Message,
+				Description: existingDefault.StorageName, // 只传存储名称
+			}
+		}
+		// 如果 err == gorm.ErrRecordNotFound，说明没有默认存储，可以继续
+	}
+
 	storage := &model.StorageConfig{
 		StorageID:        storageID,
 		StorageName:      req.StorageName,
@@ -255,6 +270,19 @@ func (s *storageService) Update(ctx context.Context, storageID string, req *Upda
 		storage.Region = req.Region
 	}
 	if req.IsDefault != nil {
+		// 如果要设置为默认存储，先检查是否已存在其他默认存储
+		if *req.IsDefault {
+			existingDefault, err := s.repo.HasDefaultStorage(ctx, storageID)
+			if err == nil && existingDefault != nil {
+				// 已存在其他默认存储，拒绝更新
+				return &StorageValidationError{
+					Code:        errors.DefaultStorageExists.Code,
+					Message:     errors.DefaultStorageExists.Message,
+					Description: existingDefault.StorageName, // 只传存储名称
+				}
+			}
+			// 如果 err == gorm.ErrRecordNotFound，说明没有其他默认存储，可以继续
+		}
 		storage.IsDefault = *req.IsDefault
 	}
 	if req.IsEnabled != nil {
@@ -329,7 +357,7 @@ func (s *storageService) List(ctx context.Context, req *ListStorageRequest) (*Li
 	}
 
 	// 查询数据库
-	storages, total, err := s.repo.ListWithPagination(ctx, req.VendorType, req.Enabled, req.Name, req.Page, req.Size, req.Order, req.Rule)
+	storages, total, err := s.repo.ListWithPagination(ctx, req.VendorType, req.Enabled, req.IsDefault, req.Name, req.Page, req.Size, req.Order, req.Rule)
 	if err != nil {
 		return nil, err
 	}

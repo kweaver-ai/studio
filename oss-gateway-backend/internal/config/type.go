@@ -15,12 +15,12 @@ type CommonConfig struct {
 }
 
 type DatabaseConfig struct {
-	// 统一使用与 Python 项目一致的环境变量命名
+	// 本地开发默认值
 	Host     string `envconfig:"RDSHOST"     default:"localhost"`
 	Port     string `envconfig:"RDSPORT"     default:"3306"`
 	User     string `envconfig:"RDSUSER"     default:"root"`
-	Password string `envconfig:"RDSPASS" default:"root"`
-	DBName   string `envconfig:"RDSDBNAME"     default:"oss_gateway"`
+	Password string `envconfig:"RDSPASS"     default:""`
+	DBName   string `envconfig:"RDSDBNAME"   default:"adp"`
 	TYPE     string `envconfig:"DB_TYPE"     default:"MYSQL"`
 	SystemID string `envconfig:"DB_SYSTEMID" default:""`
 
@@ -35,12 +35,12 @@ type RedisConfig struct {
 	// 统一使用与 Python 项目一致的环境变量命名
 	ClusterMode string `envconfig:"REDISCLUSTERMODE" default:"standalone"`
 
-	// Standalone mode (单机模式)
+	// Standalone mode (单机模式) - 本地开发默认值
 	Host     string `envconfig:"REDISHOST" default:"localhost"`
 	Port     string `envconfig:"REDISPORT" default:"6379"`
 	User     string `envconfig:"REDISUSER" default:""`
 	Password string `envconfig:"REDISPASS" default:""`
-	DB       int    `envconfig:"REDIS_DB"  default:"0"`
+	DB       int    `envconfig:"REDIS_DB"  default:"2"`
 	PoolSize int    `envconfig:"REDIS_POOL_SIZE" default:"100"`
 
 	// Master-Slave mode (主从模式 - 读)

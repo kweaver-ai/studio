@@ -14,8 +14,9 @@ type StorageRepository interface {
 	GetByID(ctx context.Context, storageID string) (*model.StorageConfig, error)
 	GetByIDInt64(ctx context.Context, id int64) (*model.StorageConfig, error)
 	List(ctx context.Context, vendorType string, enabled *bool) ([]*model.StorageConfig, error)
-	ListWithPagination(ctx context.Context, vendorType string, enabled *bool, name string, page int, size int, order string, rule string) ([]*model.StorageConfig, int, error)
+	ListWithPagination(ctx context.Context, vendorType string, enabled *bool, isDefault *bool, name string, page int, size int, order string, rule string) ([]*model.StorageConfig, int, error)
 	GetDefault(ctx context.Context) (*model.StorageConfig, error)
+	HasDefaultStorage(ctx context.Context, excludeStorageID string) (*model.StorageConfig, error)
 	// 唯一性校验方法
 	ExistsByStorageName(ctx context.Context, storageName string) (bool, error)
 	ExistsByBucketAndEndpoint(ctx context.Context, bucketName string, endpoint string) (bool, error)
@@ -85,8 +86,21 @@ func (r *storageRepository) GetDefault(ctx context.Context) (*model.StorageConfi
 	return &storage, nil
 }
 
+func (r *storageRepository) HasDefaultStorage(ctx context.Context, excludeStorageID string) (*model.StorageConfig, error) {
+	var storage model.StorageConfig
+	query := r.db.WithContext(ctx).Where("f_is_default = ?", true)
+	if excludeStorageID != "" {
+		query = query.Where("f_storage_id != ?", excludeStorageID)
+	}
+	err := query.First(&storage).Error
+	if err != nil {
+		return nil, err
+	}
+	return &storage, nil
+}
+
 // ListWithPagination 分页查询存储列表，支持模糊搜索和排序
-func (r *storageRepository) ListWithPagination(ctx context.Context, vendorType string, enabled *bool, name string, page int, size int, order string, rule string) ([]*model.StorageConfig, int, error) {
+func (r *storageRepository) ListWithPagination(ctx context.Context, vendorType string, enabled *bool, isDefault *bool, name string, page int, size int, order string, rule string) ([]*model.StorageConfig, int, error) {
 	var storages []*model.StorageConfig
 	var total int64
 
@@ -99,6 +113,10 @@ func (r *storageRepository) ListWithPagination(ctx context.Context, vendorType s
 
 	if enabled != nil {
 		query = query.Where("f_is_enabled = ?", *enabled)
+	}
+
+	if isDefault != nil {
+		query = query.Where("f_is_default = ?", *isDefault)
 	}
 
 	// 模糊搜索存储名称

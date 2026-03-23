@@ -135,6 +135,14 @@ var (
 		Description: "Endpoint must start with http:// or https://",
 		Solution:    "Please provide a valid endpoint URL",
 	}
+
+	// DefaultStorageExists 400031112 - 默认存储已存在
+	DefaultStorageExists = ErrorCode{
+		Code:        "400031112",
+		Message:     "Default storage already exists",
+		Description: "A default storage already exists: %s",
+		Solution:    "Please disable the current default storage before setting a new one",
+	}
 )
 
 // ==================== 认证授权错误码 (401000-403999) ====================
@@ -173,6 +181,7 @@ func GetErrorByCode(code string) *ErrorCode {
 		"400031109": &StorageDisabled,
 		"400031110": &InvalidVendorType,
 		"400031111": &InvalidEndpoint,
+		"400031112": &DefaultStorageExists,
 		"401000":    &Unauthorized,
 		"403000":    &Forbidden,
 	}

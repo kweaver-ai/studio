@@ -16,6 +16,7 @@ data:
   REDISCLUSTERMODE: {{ .Values.depServices.redis.connectType | quote}}
   REDISUSER: {{ .Values.depServices.redis.connectInfo.username | quote}}
   REDISPASS: {{ .Values.depServices.redis.connectInfo.password | quote}}
+  REDIS_DB: "2"
   {{- if eq .Values.depServices.redis.connectType "sentinel" }}
   REDISHOST: {{ quote .Values.depServices.redis.connectInfo.sentinelHost }}
   REDISPORT: {{ quote .Values.depServices.redis.connectInfo.sentinelPort }}

@@ -114,6 +114,14 @@ func InvalidVendorType(c *gin.Context, vendorType string) {
 		code.Solution, "")
 }
 
+// DefaultStorageExists 默认存储已存在
+func DefaultStorageExists(c *gin.Context, existingStorageName string) {
+	code := &errors.DefaultStorageExists
+	Error(c, http.StatusBadRequest, code.Code, code.Message,
+		fmt.Sprintf(code.Description, existingStorageName),
+		code.Solution, "")
+}
+
 // ErrorWithCode 使用 ErrorCode 结构返回错误
 func ErrorWithCode(c *gin.Context, httpStatus int, code *errors.ErrorCode, customMessage string) {
 	description := customMessage
