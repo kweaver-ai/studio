@@ -1,11 +1,11 @@
-{{- $image := include "mergedGlobalValues.image" . -}}
+{{- $image := include "mfModelManagerNginx.image" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.image.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ include "mergedGlobalValues.replicaCount" . }}
+  replicas: {{ include "mfModelManagerNginx.replicaCount" . }}
   selector:
     matchLabels:
       app: {{ .Values.image.name }}

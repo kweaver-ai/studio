@@ -1,4 +1,4 @@
-{{- define "mergedGlobalValues.imageRegistry" -}}
+{{- define "mfModelManagerNginx.imageRegistry" -}}
 {{- $globalImage := (.Values.global | default dict).image | default dict -}}
 {{- if $globalImage.registry -}}
 {{- $globalImage.registry -}}
@@ -7,7 +7,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.replicaCount" -}}
+{{- define "mfModelManagerNginx.replicaCount" -}}
 {{- $global := .Values.global | default dict -}}
 {{- if hasKey $global "replicaCount" -}}
 {{- $global.replicaCount -}}
@@ -16,7 +16,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.ingressClassName" -}}
+{{- define "mfModelManagerNginx.ingressClassName" -}}
 {{- $global := .Values.global | default dict -}}
 {{- if hasKey $global "ingressClassName" -}}
 {{- $global.ingressClassName -}}
@@ -25,11 +25,12 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.image" -}}
-{{- $imageRegistry := include "mergedGlobalValues.imageRegistry" . -}}
+{{- define "mfModelManagerNginx.image" -}}
+{{- $imageRegistry := include "mfModelManagerNginx.imageRegistry" . | trimSuffix "/" -}}
+{{- $repository := .Values.image.repository | trimPrefix "/" -}}
 {{- if $imageRegistry -}}
-{{- printf "%s%s:%s" $imageRegistry .Values.image.repository .Values.image.tag -}}
+{{- printf "%s/%s:%s" $imageRegistry $repository .Values.image.tag -}}
 {{- else -}}
-{{- printf "%s:%s" (.Values.image.repository | trimPrefix "/") .Values.image.tag -}}
+{{- printf "%s:%s" $repository .Values.image.tag -}}
 {{- end -}}
 {{- end -}}

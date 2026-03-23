@@ -1,4 +1,4 @@
-{{- define "mergedGlobalValues.imageRegistry" -}}
+{{- define "mfModelApi.imageRegistry" -}}
 {{- $globalImage := (.Values.global | default dict).image | default dict -}}
 {{- if $globalImage.registry -}}
 {{- $globalImage.registry -}}
@@ -7,7 +7,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.replicaCount" -}}
+{{- define "mfModelApi.replicaCount" -}}
 {{- $global := .Values.global | default dict -}}
 {{- if hasKey $global "replicaCount" -}}
 {{- $global.replicaCount -}}
@@ -16,17 +16,18 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.depServices" -}}
+{{- define "mfModelApi.depServices" -}}
 {{- $localDeps := .Values.depServices | default dict -}}
 {{- $globalDeps := (.Values.global | default dict).depServices | default dict -}}
 {{- toYaml (mergeOverwrite (deepCopy $localDeps) $globalDeps) -}}
 {{- end -}}
 
-{{- define "mergedGlobalValues.image" -}}
-{{- $imageRegistry := include "mergedGlobalValues.imageRegistry" . -}}
+{{- define "mfModelApi.image" -}}
+{{- $imageRegistry := include "mfModelApi.imageRegistry" . | trimSuffix "/" -}}
+{{- $repository := .Values.image.repository | trimPrefix "/" -}}
 {{- if $imageRegistry -}}
-{{- printf "%s%s:%s" $imageRegistry .Values.image.repository .Values.image.tag -}}
+{{- printf "%s/%s:%s" $imageRegistry $repository .Values.image.tag -}}
 {{- else -}}
-{{- printf "%s:%s" (.Values.image.repository | trimPrefix "/") .Values.image.tag -}}
+{{- printf "%s:%s" $repository .Values.image.tag -}}
 {{- end -}}
 {{- end -}}

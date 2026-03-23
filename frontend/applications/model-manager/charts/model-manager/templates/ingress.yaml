@@ -6,7 +6,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/limit-rps: "{{ .Values.ingress.rps.limit }}" # rps：每秒多少请求 超过之后就报错 https status: 503
 spec:
-  ingressClassName: {{ include "mergedGlobalValues.ingressClassName" . }}
+  ingressClassName: {{ include "mfModelManagerNginx.ingressClassName" . }}
   rules:
     - http:
         paths:

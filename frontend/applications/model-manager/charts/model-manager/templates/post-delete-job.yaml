@@ -23,7 +23,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: post-delete-job
-          image: "{{ include "mergedGlobalValues.image" . }}"
+          image: "{{ include "mfModelManagerNginx.image" . }}"
           command:
             - "sh"
             - "-c"

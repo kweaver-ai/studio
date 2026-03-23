@@ -1,4 +1,4 @@
-{{- $depServices := include "mergedGlobalValues.depServices" . | fromYaml -}}
+{{- $depServices := include "mfModelManager.depServices" . | fromYaml -}}
 {{- $configMapName := printf "%s-yaml" .Values.image.name -}}
 {{- $rdsConfVolume := printf "%s-rds-conf" .Values.image.name -}}
 apiVersion: apps/v1
@@ -7,7 +7,7 @@ metadata:
   name: {{ .Values.image.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ include "mergedGlobalValues.replicaCount" . }}
+  replicas: {{ include "mfModelManager.replicaCount" . }}
   selector:
     matchLabels:
       app: {{ .Values.image.name }}
@@ -35,7 +35,7 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
-          image: "{{ include "mergedGlobalValues.image" . }}"
+          image: "{{ include "mfModelManager.image" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: model-factory

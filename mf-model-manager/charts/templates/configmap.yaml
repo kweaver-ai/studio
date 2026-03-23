@@ -1,4 +1,4 @@
-{{- $depServices := include "mergedGlobalValues.depServices" . | fromYaml -}}
+{{- $depServices := include "mfModelManager.depServices" . | fromYaml -}}
 apiVersion: v1
 data:
   RDSHOST: {{ $depServices.rds.host | quote }}
