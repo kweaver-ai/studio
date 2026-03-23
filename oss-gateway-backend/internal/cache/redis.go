@@ -139,10 +139,6 @@ func newSentinelClient(cfg *config.AppConfig, log *logrus.Entry) (redis.Universa
 		Password:         cfg.RedisConfig.Password,
 		DB:               cfg.RedisConfig.DB,
 		PoolSize:         cfg.RedisConfig.PoolSize,
-
-		// Route reads to slaves
-		RouteByLatency: true,
-		RouteRandomly:  true,
 	}
 
 	if cfg.RedisConfig.SentinelUser != "" {
