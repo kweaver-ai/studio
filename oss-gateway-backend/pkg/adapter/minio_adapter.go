@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -31,20 +32,28 @@ func NewMinIOAdapter(config StorageConfig) (*MinIOAdapter, error) {
 	endpoint = strings.TrimPrefix(endpoint, "https://")
 	endpoint = strings.TrimPrefix(endpoint, "http://")
 
-	client, err := minio.New(endpoint, &minio.Options{
+	options := &minio.Options{
 		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.AccessKeySecret, ""),
 		Secure: config.UseSSL,
 		Region: config.Region,
-	})
+	}
+
+	// 对于 ECEPH 存储，如果使用 HTTPS，跳过证书验证
+	// 因为私有化部署可能使用自签名证书或没有购买证书
+	if config.VendorType == VendorECEPH && config.UseSSL {
+		options.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+	}
+
+	client, err := minio.New(endpoint, options)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create minio client: %w", err)
 	}
 
-	core, err := minio.NewCore(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.AccessKeySecret, ""),
-		Secure: config.UseSSL,
-		Region: config.Region,
-	})
+	core, err := minio.NewCore(endpoint, options)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create minio core client: %w", err)
 	}
