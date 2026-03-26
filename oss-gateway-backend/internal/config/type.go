@@ -33,7 +33,7 @@ type DatabaseConfig struct {
 type RedisConfig struct {
 	// Redis cluster mode: standalone, master-slave, sentinel
 	// 统一使用与 Python 项目一致的环境变量命名
-	ClusterMode string `envconfig:"REDISCLUSTERMODE" default:"standalone"`
+	ClusterMode string `envconfig:"REDISCLUSTERMODE" default:"sentinel"`
 
 	// Standalone mode (单机模式) - 本地开发默认值
 	Host     string `envconfig:"REDISHOST" default:"localhost"`
@@ -56,10 +56,10 @@ type RedisConfig struct {
 	WritePassword string `envconfig:"REDISWRITEPASS" default:""`
 
 	// Sentinel mode (哨兵模式)
-	SentinelAddrs    []string `envconfig:"REDIS_SENTINEL_ADDRS" default:"localhost:26379"`
+	SentinelAddrs    []string `envconfig:"REDIS_SENTINEL_ADDRS" default:"192.168.40.104:26379"`
 	SentinelMaster   string   `envconfig:"SENTINELMASTER"       default:"mymaster"`
-	SentinelUser     string   `envconfig:"SENTINELUSER"         default:""`
-	SentinelPassword string   `envconfig:"SENTINELPASS"         default:""`
+	SentinelUser     string   `envconfig:"SENTINELUSER"         default:"root"`
+	SentinelPassword string   `envconfig:"SENTINELPASS"         default:"dnPeNWubr0"`
 }
 
 type LogConfig struct {

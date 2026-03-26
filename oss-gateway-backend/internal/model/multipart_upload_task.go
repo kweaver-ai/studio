@@ -17,8 +17,8 @@ type MultipartUploadTask struct {
 	PartSize   int       `gorm:"column:f_part_size;type:int;not null" json:"part_size"`
 	TotalParts int       `gorm:"column:f_total_parts;type:int;not null" json:"total_parts"`
 	Status     int       `gorm:"column:f_status;type:smallint;default:0" json:"status"`
-	CreatedAt  time.Time `gorm:"column:f_created_at;autoCreateTime" json:"created_at"`
-	ExpiresAt  time.Time `gorm:"column:f_expires_at;type:timestamp;not null" json:"expires_at"`
+	CreatedAt  time.Time `gorm:"column:f_created_at;type:datetime(6);autoCreateTime" json:"created_at"`
+	ExpiresAt  time.Time `gorm:"column:f_expires_at;type:datetime(6);not null" json:"expires_at"`
 }
 
 func (MultipartUploadTask) TableName() string {

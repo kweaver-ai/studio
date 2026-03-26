@@ -57,8 +57,6 @@ data:
   # authorization服务
   AUTHORIZATIONPRIVATEHOST: {{ .Values.depServices.authorization.privateHost | quote }}
   AUTHORIZATIONPRIVATEPORT: {{ .Values.depServices.authorization.privatePort | quote }}
-  # 加密密钥配置
-  CRYPTO_AES_KEY: {{ .Values.depServices.crypto.aesKey | quote }}
   dm_svc.conf: |
     TIME_ZON=(480)
     LANGUAGE=(cn)

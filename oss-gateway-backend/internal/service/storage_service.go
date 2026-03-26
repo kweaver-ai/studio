@@ -241,6 +241,21 @@ func (s *storageService) Update(ctx context.Context, storageID string, req *Upda
 	}
 
 	if req.StorageName != "" {
+		// 检查存储名称是否与其他存储重名
+		if req.StorageName != storage.StorageName {
+			nameExists, err := s.repo.ExistsByStorageName(ctx, req.StorageName)
+			if err != nil {
+				s.log.WithError(err).Error("failed to check storage name in database")
+				return fmt.Errorf("failed to check storage name uniqueness")
+			}
+			if nameExists {
+				return &StorageValidationError{
+					Code:        errors.StorageNameExists.Code,
+					Message:     errors.StorageNameExists.Message,
+					Description: fmt.Sprintf(errors.StorageNameExists.Description, req.StorageName),
+				}
+			}
+		}
 		storage.StorageName = req.StorageName
 	}
 	if req.Endpoint != "" {
