@@ -307,12 +307,6 @@ spec:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-yaml
                   key: AUTHORIZATIONPRIVATEPORT
-            # 加密配置
-            - name: CRYPTO_AES_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Release.Name }}-yaml
-                  key: CRYPTO_AES_KEY
             # 可观测相关配置
             - name: LOG_ENABLED
               value: {{ .Values.observability.logEnabled | quote }}
