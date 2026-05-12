@@ -5,6 +5,7 @@ type ResourceObject struct {
 	ResourceType string
 	BDID         string
 	CreateBy     string
+	CreateByType string
 }
 
 func (svc *ResourceService) SetToken(token string) *ResourceService {

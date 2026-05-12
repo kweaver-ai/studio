@@ -10,10 +10,11 @@ import (
 )
 
 type listResourceItem struct {
-	BDID     string `json:"bd_id"`
-	ID       string `json:"id"`
-	Type     string `json:"type"`
-	CreateBy string `json:"create_by"`
+	BDID         string `json:"bd_id"`
+	ID           string `json:"id"`
+	Type         string `json:"type"`
+	CreateBy     string `json:"create_by"`
+	CreateByType string `json:"create_by_type"`
 }
 
 type paginationResponse struct {
@@ -60,10 +61,11 @@ func Search(svc *service.ResourceService) gin.HandlerFunc {
 		items := make([]listResourceItem, 0, len(rel))
 		for _, r := range rel {
 			items = append(items, listResourceItem{
-				BDID:     r.BDID,
-				ID:       r.ResourceID,
-				Type:     r.ResourceType,
-				CreateBy: r.CreateBy,
+				BDID:         r.BDID,
+				ID:           r.ResourceID,
+				Type:         r.ResourceType,
+				CreateBy:     r.CreateBy,
+				CreateByType: r.CreateByType,
 			})
 		}
 
@@ -111,10 +113,11 @@ func InternalSearch(svc *service.ResourceService) gin.HandlerFunc {
 		items := make([]listResourceItem, 0, len(rel))
 		for _, r := range rel {
 			items = append(items, listResourceItem{
-				BDID:     r.BDID,
-				ID:       r.ResourceID,
-				Type:     r.ResourceType,
-				CreateBy: r.CreateBy,
+				BDID:         r.BDID,
+				ID:           r.ResourceID,
+				Type:         r.ResourceType,
+				CreateBy:     r.CreateBy,
+				CreateByType: r.CreateByType,
 			})
 		}
 

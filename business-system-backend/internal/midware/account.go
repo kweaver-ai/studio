@@ -1,7 +1,9 @@
 package midware
 
 import (
+	"log"
 	"net/http"
+	"strings"
 	"system-backend/internal/cerror"
 	"system-backend/internal/pkg/usermgnt"
 
@@ -13,7 +15,7 @@ const (
 )
 
 type AccountContext struct {
-	UserInfo *usermgnt.UserInfo
+	UserInfo *usermgnt.AccountInfo
 }
 
 func AccountMiddleware(
@@ -22,7 +24,7 @@ func AccountMiddleware(
 	return func(c *gin.Context) {
 		actx := &AccountContext{}
 		accountID := c.GetHeader("x-account-id")
-		accountType := c.GetHeader("x-account-type")
+		accountType := strings.TrimSpace(strings.ToLower(c.GetHeader("x-account-type")))
 
 		if accountID != "" {
 			if accountType == "" {
@@ -33,18 +35,37 @@ func AccountMiddleware(
 					GinFailed(c)
 				return
 			}
-
-			userInfo, err := userMgnt.UserInfo(accountID)
-			if err != nil {
+			if accountType != usermgnt.AccountTypeUser && accountType != usermgnt.AccountTypeApp {
 				cerror.
-					New(cerror.ErrCodeUnauthorized).
-					SetHttpCode(http.StatusUnauthorized).
-					SetErr(err).
-					WithMessage("invalid user_id").
+					New(cerror.ErrCodeBadRequest).
+					SetHttpCode(http.StatusBadRequest).
+					WithMessage("invalid x-account-type: must be user or app").
 					GinFailed(c)
 				return
 			}
-			actx.UserInfo = userInfo
+
+			userInfo, err := userMgnt.AccountInfo(c.Request.Context(), accountID, accountType)
+			if err != nil {
+				if accountType == usermgnt.AccountTypeApp {
+					log.Printf("account middleware: failed to resolve app account %s: %v", accountID, err)
+					actx.UserInfo = &usermgnt.AccountInfo{
+						ID:    accountID,
+						Type:  usermgnt.AccountTypeApp,
+						Name:  "-",
+						Roles: nil,
+					}
+				} else {
+					cerror.
+						New(cerror.ErrCodeUnauthorized).
+						SetHttpCode(http.StatusUnauthorized).
+						SetErr(err).
+						WithMessage("invalid user_id").
+						GinFailed(c)
+					return
+				}
+			} else {
+				actx.UserInfo = userInfo
+			}
 		}
 
 		c.Set(KeyAccountContext, actx)

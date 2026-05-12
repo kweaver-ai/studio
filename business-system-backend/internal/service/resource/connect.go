@@ -14,10 +14,10 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (svc *ResourceService) Connect(u *usermgnt.UserInfo, obj *ResourceObject) error {
+func (svc *ResourceService) Connect(u *usermgnt.AccountInfo, obj *ResourceObject) error {
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, u.Type)
 		if err != nil {
 			return err
 		}
@@ -39,6 +39,10 @@ func (svc *ResourceService) Connect(u *usermgnt.UserInfo, obj *ResourceObject) e
 
 func (svc *ResourceService) InternalConnect(obj *ResourceObject) error {
 	ctx := context.TODO() // TODO: use upstream context
+
+	if obj.CreateByType == "" {
+		obj.CreateByType = usermgnt.AccountTypeUser
+	}
 
 	svc.log.WithField("connect_obj", obj).Debug("debug connect request")
 
@@ -67,6 +71,7 @@ func (svc *ResourceService) InternalConnect(obj *ResourceObject) error {
 			ResourceID:   obj.ResourceID,
 			ResourceType: obj.ResourceType,
 			CreateBy:     obj.CreateBy,
+			CreateByType: obj.CreateByType,
 		})
 		if err != nil {
 			return err
@@ -102,6 +107,11 @@ func (svc *ResourceService) InternalBatchConnect(bdid string, objs []*ResourceOb
 	}
 
 	err := svc.db.Transaction(func(tx *gorm.DB) error {
+		for _, item := range objs {
+			if item.CreateByType == "" {
+				item.CreateByType = usermgnt.AccountTypeUser
+			}
+		}
 		all := slice.Map(
 			objs, func(index int, item *ResourceObject) model.BDResourceR {
 				return model.BDResourceR{
@@ -109,6 +119,7 @@ func (svc *ResourceService) InternalBatchConnect(bdid string, objs []*ResourceOb
 					ResourceID:   item.ResourceID,
 					ResourceType: item.ResourceType,
 					CreateBy:     item.CreateBy,
+					CreateByType: item.CreateByType,
 				}
 			})
 

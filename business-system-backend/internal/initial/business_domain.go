@@ -6,6 +6,7 @@ import (
 	"system-backend/internal/model"
 	"system-backend/internal/pkg/authorization"
 	"system-backend/internal/pkg/deployservice"
+	"system-backend/internal/pkg/usermgnt"
 	businessdomain "system-backend/internal/service/business_domain"
 
 	"github.com/duke-git/lancet/v2/slice"
@@ -51,9 +52,10 @@ func InitBusinessDomain(
 		mps := make([]model.BDProductR, 0, len(products))
 		for _, p := range products {
 			mps = append(mps, model.BDProductR{
-				BDID:     PublicBusinessDomain.ID,
-				PID:      p.ID,
-				CreateBy: model.CreatorSystem,
+				BDID:         PublicBusinessDomain.ID,
+				PID:          p.ID,
+				CreateBy:     model.CreatorSystem,
+				CreateByType: usermgnt.AccountTypeUser,
 			})
 		}
 

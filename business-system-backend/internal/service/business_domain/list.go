@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *BusinessDomainService) List(u *usermgnt.UserInfo) ([]*BusinessDomainObject, error) {
+func (svc *BusinessDomainService) List(u *usermgnt.AccountInfo) ([]*BusinessDomainObject, error) {
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if isSuperAdmin {
 		return svc.listAll()
@@ -28,9 +28,9 @@ func (svc *BusinessDomainService) listAll() ([]*BusinessDomainObject, error) {
 	return svc.queryBusinessDomains(ctx, ms)
 }
 
-func (svc *BusinessDomainService) listSelf(u *usermgnt.UserInfo) ([]*BusinessDomainObject, error) {
+func (svc *BusinessDomainService) listSelf(u *usermgnt.AccountInfo) ([]*BusinessDomainObject, error) {
 	ctx := context.TODO() // TODO: use upstream context
-	bdids, err := svc.cliAuthorization.GetMemberBDs(u.ID, "user")
+	bdids, err := svc.cliAuthorization.GetMemberBDs(u.ID, u.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +45,31 @@ func (svc *BusinessDomainService) listSelf(u *usermgnt.UserInfo) ([]*BusinessDom
 }
 
 func (svc *BusinessDomainService) queryBusinessDomains(ctx context.Context, ms []model.BusinessDomain) ([]*BusinessDomainObject, error) {
+	seenCreators := map[string]struct{}{}
+	creatorAccounts := make([]*usermgnt.AccountInfo, 0)
+	for _, m := range ms {
+		if m.BDCreator == "" || m.BDCreator == "-" {
+			continue
+		}
+		if _, ok := seenCreators[m.BDCreator]; ok {
+			continue
+		}
+		seenCreators[m.BDCreator] = struct{}{}
+		creatorAccounts = append(creatorAccounts, &usermgnt.AccountInfo{
+			ID:   m.BDCreator,
+			Type: usermgnt.AccountTypeUser,
+		})
+	}
+	if len(creatorAccounts) > 0 {
+		if err := svc.cliUserMgnt.GetAccountNames(ctx, creatorAccounts); err != nil {
+			return nil, err
+		}
+	}
+	nameByCreator := make(map[string]string, len(creatorAccounts))
+	for _, a := range creatorAccounts {
+		nameByCreator[a.ID] = a.Name
+	}
+
 	results := make([]*BusinessDomainObject, 0, len(ms))
 	for _, m := range ms {
 		prs, err := gorm.G[model.BDProductR](svc.db).Where("f_bd_id = ?", m.BDID).Find(ctx)
@@ -57,9 +82,12 @@ func (svc *BusinessDomainService) queryBusinessDomains(ctx context.Context, ms [
 			products = append(products, pr.PID)
 		}
 
-		creator, err := svc.cliUserMgnt.UserInfo(m.BDCreator)
-		if err != nil {
-			return nil, err
+		creatorName := "-"
+		creatorID := m.BDCreator
+		if creatorID == "-" {
+			creatorName = "-"
+		} else if n, ok := nameByCreator[creatorID]; ok && n != "" {
+			creatorName = n
 		}
 
 		results = append(results, &BusinessDomainObject{
@@ -69,8 +97,8 @@ func (svc *BusinessDomainService) queryBusinessDomains(ctx context.Context, ms [
 			Products:    products,
 			CreateTime:  m.CreatedAt,
 			CreatorInfo: BusinessDomainCreatorInfo{
-				ID:   creator.ID,
-				Name: creator.Name,
+				ID:   creatorID,
+				Name: creatorName,
 			},
 		})
 	}

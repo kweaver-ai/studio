@@ -8,6 +8,7 @@ type BDResourceR struct {
 	ResourceID   string `gorm:"column:f_resource_id"`
 	ResourceType string `gorm:"column:f_resource_type"`
 	CreateBy     string `gorm:"column:f_create_by"`
+	CreateByType string `gorm:"column:f_create_by_type;not null;default:user"`
 }
 
 func (BDResourceR) TableName() string {

@@ -16,26 +16,26 @@ type BusinessDomainServiceInterface interface {
 	SetLogOperator(o *auditlog.Toperator) *BusinessDomainService
 
 	// Create 创建新的业务域
-	Create(u *usermgnt.UserInfo, obj *BusinessDomainObject) (string, error)
+	Create(u *usermgnt.AccountInfo, obj *BusinessDomainObject) (string, error)
 
 	// Get 获取指定业务域的详细信息
-	Get(u *usermgnt.UserInfo, bdid string) (*BusinessDomainObject, error)
+	Get(u *usermgnt.AccountInfo, bdid string) (*BusinessDomainObject, error)
 
 	// List 获取业务域列表
-	List(u *usermgnt.UserInfo) ([]*BusinessDomainObject, error)
+	List(u *usermgnt.AccountInfo) ([]*BusinessDomainObject, error)
 
 	// ResourceTypeInstanceList 获取资源类型实例列表，支持分页和关键词搜索
 	ResourceTypeInstanceList(limit, offset int, keyword string) ([]*BusinessDomainObject, int64, error)
 
 	// Edit 编辑业务域信息
-	Edit(u *usermgnt.UserInfo, bdid string, obj *BusinessDomainObject) error
+	Edit(u *usermgnt.AccountInfo, bdid string, obj *BusinessDomainObject) error
 
 	// Delete 删除业务域
-	Delete(u *usermgnt.UserInfo, bdid string) error
+	Delete(u *usermgnt.AccountInfo, bdid string) error
 
 	// MemberEdit 编辑业务域成员
-	MemberEdit(u *usermgnt.UserInfo, bdid string, add, update, remove []BusinessDomainMemberObject) error
+	MemberEdit(u *usermgnt.AccountInfo, bdid string, add, update, remove []BusinessDomainMemberObject) error
 
 	// MemberList 获取业务域成员列表
-	MemberList(u *usermgnt.UserInfo, bdid string, limit, offset int) ([]*BusinessDomainMemberObject, int, error)
+	MemberList(u *usermgnt.AccountInfo, bdid string, limit, offset int) ([]*BusinessDomainMemberObject, int, error)
 }

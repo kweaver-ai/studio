@@ -1,6 +1,7 @@
 package midware
 
 import (
+	"errors"
 	"net/http"
 	"system-backend/internal/cerror"
 	"system-backend/internal/pkg/auditlog"
@@ -16,7 +17,7 @@ const (
 )
 
 type AuthContext struct {
-	UserInfo *usermgnt.UserInfo
+	UserInfo *usermgnt.AccountInfo
 	Token    string
 	Operator *auditlog.Toperator
 }
@@ -49,22 +50,39 @@ func AuthMiddleware(
 				GinFailed(c)
 			return
 		}
-
-		userInfo, err := userMgnt.UserInfo(info.Sub)
-		if err != nil {
+		if !info.Active {
 			cerror.
 				New(cerror.ErrCodeUnauthorized).
 				SetHttpCode(http.StatusUnauthorized).
-				SetErr(err).
-				WithMessage("invalid user_id").
+				WithMessage("invalid token").
+				WithCause("token is not active").
 				GinFailed(c)
 			return
 		}
 
+		userInfo, err := userMgnt.ResolveSubject(c.Request.Context(), info.Sub)
+		if err != nil {
+			msg := "invalid user_id"
+			if errors.Is(err, usermgnt.ErrSubjectNotFound) {
+				msg = "invalid token subject"
+			}
+			cerror.
+				New(cerror.ErrCodeUnauthorized).
+				SetHttpCode(http.StatusUnauthorized).
+				SetErr(err).
+				WithMessage(msg).
+				GinFailed(c)
+			return
+		}
+
+		opType := "authenticated_user"
+		if userInfo.Type == usermgnt.AccountTypeApp {
+			opType = "authenticated_app"
+		}
 		operator := auditlog.Toperator{
 			ID:   userInfo.ID,
 			Name: userInfo.Name,
-			Type: "authenticated_user",
+			Type: opType,
 			Agent: auditlog.ToperatorAgent{
 				IP:   c.ClientIP(),
 				Mac:  c.GetHeader("X-Request-MAC"),

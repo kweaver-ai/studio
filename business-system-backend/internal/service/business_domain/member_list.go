@@ -10,11 +10,11 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 )
 
-func (svc *BusinessDomainService) MemberList(u *usermgnt.UserInfo, bdid string, limit, offset int) ([]*BusinessDomainMemberObject, int, error) {
+func (svc *BusinessDomainService) MemberList(u *usermgnt.AccountInfo, bdid string, limit, offset int) ([]*BusinessDomainMemberObject, int, error) {
 	// ctx := context.TODO() // TODO: use upstream context
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, u.Type)
 		if err != nil {
 			return nil, 0, err
 		}

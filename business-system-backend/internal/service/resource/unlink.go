@@ -12,11 +12,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *ResourceService) Unlink(u *usermgnt.UserInfo, obj *ResourceObject) error {
+func (svc *ResourceService) Unlink(u *usermgnt.AccountInfo, obj *ResourceObject) error {
 
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, u.Type)
 		if err != nil {
 			return err
 		}

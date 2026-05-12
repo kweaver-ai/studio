@@ -17,11 +17,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *BusinessDomainService) Edit(u *usermgnt.UserInfo, bdid string, obj *BusinessDomainObject) error {
+func (svc *BusinessDomainService) Edit(u *usermgnt.AccountInfo, bdid string, obj *BusinessDomainObject) error {
 	ctx := context.TODO() // TODO: use upstream context
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, u.Type)
 		if err != nil {
 			return err
 		}
@@ -95,9 +95,10 @@ func (svc *BusinessDomainService) Edit(u *usermgnt.UserInfo, bdid string, obj *B
 			products := make([]model.BDProductR, 0, len(obj.Products))
 			for _, pid := range obj.Products {
 				products = append(products, model.BDProductR{
-					BDID:     bdid,
-					PID:      pid,
-					CreateBy: u.ID,
+					BDID:         bdid,
+					PID:          pid,
+					CreateBy:     u.ID,
+					CreateByType: u.Type,
 				})
 			}
 			err = gorm.G[model.BDProductR](tx).CreateInBatches(ctx, &products, len(products))

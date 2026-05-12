@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *BusinessDomainService) Delete(u *usermgnt.UserInfo, bdid string) error {
+func (svc *BusinessDomainService) Delete(u *usermgnt.AccountInfo, bdid string) error {
 	ctx := context.TODO() // TODO: use upstream context
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {

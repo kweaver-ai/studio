@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *ResourceService) Search(u *usermgnt.UserInfo, obj *ResourceObject, limit, offset int) ([]*ResourceObject, int64, error) {
+func (svc *ResourceService) Search(u *usermgnt.AccountInfo, obj *ResourceObject, limit, offset int) ([]*ResourceObject, int64, error) {
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(obj.BDID, u.ID, u.Type)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -61,6 +61,7 @@ func (svc *ResourceService) InternalSearch(obj *ResourceObject, limit, offset in
 		result = append(result, &ResourceObject{
 			BDID:         sr.DBID,
 			CreateBy:     sr.CreateBy,
+			CreateByType: sr.CreateByType,
 			ResourceID:   sr.ResourceID,
 			ResourceType: sr.ResourceType,
 		})

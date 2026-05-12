@@ -35,11 +35,11 @@ func roleString(role string) string {
 	}
 }
 
-func (svc *BusinessDomainService) MemberEdit(u *usermgnt.UserInfo, bdid string, add, update, remove []BusinessDomainMemberObject) error {
+func (svc *BusinessDomainService) MemberEdit(u *usermgnt.AccountInfo, bdid string, add, update, remove []BusinessDomainMemberObject) error {
 	ctx := context.TODO() // TODO: use upstream context
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, u.Type)
 		if err != nil {
 			return err
 		}
@@ -242,7 +242,7 @@ func (svc *BusinessDomainService) memberEditRemove(ctx context.Context, bdm *mod
 }
 
 // TODO: 检查管理员是否被全部移除
-func (svc *BusinessDomainService) memberEditValid(u *usermgnt.UserInfo, bdid string, remove []BusinessDomainMemberObject) error {
+func (svc *BusinessDomainService) memberEditValid(u *usermgnt.AccountInfo, bdid string, remove []BusinessDomainMemberObject) error {
 	mbrs, _, err := svc.MemberList(u, bdid, -1, 0)
 	if err != nil {
 		return err

@@ -17,7 +17,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *BusinessDomainService) Create(u *usermgnt.UserInfo, obj *BusinessDomainObject) (string, error) {
+func (svc *BusinessDomainService) Create(u *usermgnt.AccountInfo, obj *BusinessDomainObject) (string, error) {
 	ctx := context.TODO() // TODO: use upstream context
 	if !slices.Contains(u.Roles, "super_admin") {
 		return "", cerror.
@@ -61,7 +61,7 @@ func (svc *BusinessDomainService) Create(u *usermgnt.UserInfo, obj *BusinessDoma
 		Role:  model.MemberRoleAdminitrator,
 		UID:   u.ID,
 		UName: u.Name,
-		UType: "user",
+		UType: u.Type,
 	}
 
 	bdID := uuid.New().String()
@@ -69,9 +69,10 @@ func (svc *BusinessDomainService) Create(u *usermgnt.UserInfo, obj *BusinessDoma
 	products := make([]model.BDProductR, 0, len(obj.Products))
 	for _, pId := range obj.Products {
 		products = append(products, model.BDProductR{
-			BDID:     bdID,
-			PID:      pId,
-			CreateBy: u.ID,
+			BDID:         bdID,
+			PID:          pId,
+			CreateBy:     u.ID,
+			CreateByType: u.Type,
 		})
 	}
 

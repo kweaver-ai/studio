@@ -12,11 +12,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func (svc *BusinessDomainService) Get(u *usermgnt.UserInfo, bdid string) (*BusinessDomainObject, error) {
+func (svc *BusinessDomainService) Get(u *usermgnt.AccountInfo, bdid string) (*BusinessDomainObject, error) {
 	ctx := context.TODO() // TODO: use upstream context
 	isSuperAdmin := slices.Contains(u.Roles, "super_admin")
 	if !isSuperAdmin {
-		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, "user")
+		roles, err := svc.cliAuthorization.CheckBDMember(bdid, u.ID, u.Type)
 		if err != nil {
 			return nil, err
 		}
@@ -38,6 +38,7 @@ func (svc *BusinessDomainService) Get(u *usermgnt.UserInfo, bdid string) (*Busin
 				SetErr(err).
 				WithMessage("business_domain not found")
 		}
+		return nil, err
 	}
 
 	prs, err := gorm.G[model.BDProductR](svc.db).Where("f_bd_id = ?", bd.BDID).Find(ctx)
@@ -50,9 +51,15 @@ func (svc *BusinessDomainService) Get(u *usermgnt.UserInfo, bdid string) (*Busin
 		products = append(products, pr.PID)
 	}
 
-	creator, err := svc.cliUserMgnt.UserInfo(bd.BDCreator)
-	if err != nil {
-		return nil, err
+	creatorName := "-"
+	if bd.BDCreator != "" && bd.BDCreator != "-" {
+		accts := []*usermgnt.AccountInfo{{ID: bd.BDCreator, Type: usermgnt.AccountTypeUser}}
+		if err := svc.cliUserMgnt.GetAccountNames(ctx, accts); err != nil {
+			return nil, err
+		}
+		if accts[0].Name != "" {
+			creatorName = accts[0].Name
+		}
 	}
 
 	return &BusinessDomainObject{
@@ -62,8 +69,8 @@ func (svc *BusinessDomainService) Get(u *usermgnt.UserInfo, bdid string) (*Busin
 		Products:    products,
 		CreateTime:  bd.CreatedAt,
 		CreatorInfo: BusinessDomainCreatorInfo{
-			ID:   creator.ID,
-			Name: creator.Name,
+			ID:   bd.BDCreator,
+			Name: creatorName,
 		},
 	}, nil
 }

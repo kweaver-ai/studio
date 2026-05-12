@@ -30,8 +30,9 @@ func setupTestRouter() *gin.Engine {
 				ID:   "test-operator",
 				Name: "Test Operator",
 			},
-			UserInfo: &usermgnt.UserInfo{
+			UserInfo: &usermgnt.AccountInfo{
 				ID:    "test-user",
+				Type:  usermgnt.AccountTypeUser,
 				Name:  "Test User",
 				Roles: []string{"super_admin"},
 			},

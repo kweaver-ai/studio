@@ -5,6 +5,7 @@ import (
 	"system-backend/internal/cerror"
 	"system-backend/internal/midware"
 	"system-backend/internal/model"
+	"system-backend/internal/pkg/usermgnt"
 	service "system-backend/internal/service/resource"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,7 @@ func Connect(svc *service.ResourceService) gin.HandlerFunc {
 
 		err := svc.Connect(actx.UserInfo, &service.ResourceObject{
 			CreateBy:     actx.UserInfo.ID,
+			CreateByType: actx.UserInfo.Type,
 			ResourceID:   req.ID,
 			ResourceType: req.Type,
 			BDID:         req.BDID,
@@ -64,6 +66,7 @@ func InternalConnect(svc *service.ResourceService) gin.HandlerFunc {
 
 		obj := &service.ResourceObject{
 			CreateBy:     model.CreatorSystem,
+			CreateByType: usermgnt.AccountTypeUser,
 			ResourceID:   req.ID,
 			ResourceType: req.Type,
 			BDID:         req.BDID,
@@ -74,6 +77,7 @@ func InternalConnect(svc *service.ResourceService) gin.HandlerFunc {
 		var err error
 		if actx.UserInfo != nil {
 			obj.CreateBy = actx.UserInfo.ID
+			obj.CreateByType = actx.UserInfo.Type
 			err = svc.Connect(actx.UserInfo, obj)
 		} else {
 			err = svc.InternalConnect(obj)
@@ -124,6 +128,7 @@ func InternalBatchConnect(svc *service.ResourceService) gin.HandlerFunc {
 			}
 			objs = append(objs, &service.ResourceObject{
 				CreateBy:     model.CreatorSystem,
+				CreateByType: usermgnt.AccountTypeUser,
 				ResourceID:   i.ID,
 				ResourceType: i.Type,
 				BDID:         bdid,
